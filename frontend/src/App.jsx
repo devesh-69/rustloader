@@ -16,7 +16,7 @@ import CheckOutPage from "./components/CheckOutPage/CheckOut";
 import Dashboard from "./components/Dashboard/Dashboard";
 import SignUp from "./components/CustomerLogin/signUp";
 import Login from "./components/CustomerLogin/login";
-import { RefreshHandler } from "./components/RefreshHandler";
+// import { RefreshHandler } from "./components/RefreshHandler";
 
 function Layout({ children }) {
   return (
@@ -29,11 +29,11 @@ function Layout({ children }) {
 }
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const PrivateRoute = ({ element }) => {
-    return isAuthenticated ? element : <Navigate to="/login" />;
-  };
+  // const PrivateRoute = ({ element }) => {
+  //   return isAuthenticated ? element : <Navigate to="/login" />;
+  // };
 
   const router = createBrowserRouter([
     {
@@ -88,7 +88,8 @@ function App() {
       path: "/checkout",
       element: (
         <Layout>
-          <PrivateRoute element={<CheckOutPage />} />
+          {/* <PrivateRoute element={<CheckOutPage />} /> */}
+          <CheckOutPage />
         </Layout>
       ),
     },
@@ -120,7 +121,7 @@ function App() {
 
   return (
     <RouterProvider router={router}>
-      <RefreshHandler setIsAuthenticated={setIsAuthenticated} />
+      {/* <RefreshHandler setIsAuthenticated={setIsAuthenticated} /> */}
     </RouterProvider>
   );
 }
