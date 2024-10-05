@@ -54,7 +54,7 @@ const VehicleListingForm = () => {
     formData.append("kmDriven", vehicleDetails.kmDriven);
 
     try {
-      const response = await fetch("http://localhost:5000/api/vehicles", {
+      const response = await fetch("http://localhost:8080/api/vehicles", {
         method: "POST",
         body: formData,
       });
