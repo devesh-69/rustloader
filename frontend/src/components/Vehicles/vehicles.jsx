@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaClock, FaTags } from "react-icons/fa";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { Button } from "@/components/ui/button"; // Adjust paths for these imports
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -19,13 +19,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ThreeDots } from "react-loader-spinner";
+import Fuse from "fuse.js";
 
 export default function ConstructionRental() {
   const [isOpen, setIsOpen] = useState(false);
-  const [budget, setBudget] = useState([0, 10]); // Budget in thousands
+  const [budget, setBudget] = useState([6.7, 100]); // Default budget range for 'All' is full range
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState("All");
-  const [sortOrder, setSortOrder] = useState(""); // State for sorting
+  const [sortOrder, setSortOrder] = useState("");
+  const [vehicleListings, setVehicleListings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Vehicle types and icons for filtering
   const vehicleTypes = [
@@ -41,69 +46,85 @@ export default function ConstructionRental() {
     { name: "Loader", icon: "🚜" },
   ];
 
-  // List of vehicles (this can be fetched from an API in real use case)
-  const vehicleListings = [
-    {
-      id: 1,
-      name: "JCB Dump Truck",
-      type: "Dump Truck",
-      price: 2500,
-      image:
-        "https://media.istockphoto.com/id/636021590/photo/earth-mover-in-a-new-highway-construction-s3-poland.jpg?s=2048x2048&w=is&k=20&c=oCs8T2pN1IMqLVNlEMjwxV-GqgDoKEpY1x3MpbAHdeo=",
-    },
-    {
-      id: 2,
-      name: "Excavator X200",
-      type: "Excavator",
-      price: 3000,
-      image:
-        "https://media.istockphoto.com/id/636021590/photo/earth-mover-in-a-new-highway-construction-s3-poland.jpg?s=2048x2048&w=is&k=20&c=oCs8T2pN1IMqLVNlEMjwxV-GqgDoKEpY1x3MpbAHdeo=",
-    },
-    {
-      id: 3,
-      name: "Bulldozer Z100",
-      type: "Bulldozer",
-      price: 3500,
-      image:
-        "https://media.istockphoto.com/id/636021590/photo/earth-mover-in-a-new-highway-construction-s3-poland.jpg?s=2048x2048&w=is&k=20&c=oCs8T2pN1IMqLVNlEMjwxV-GqgDoKEpY1x3MpbAHdeo=",
-    },
-    {
-      id: 4,
-      name: "Bulldozer Y200",
-      type: "Excavator",
-      price: 4500,
-      image:
-        "https://media.istockphoto.com/id/636021590/photo/earth-mover-in-a-new-highway-construction-s3-poland.jpg?s=2048x2048&w=is&k=20&c=oCs8T2pN1IMqLVNlEMjwxV-GqgDoKEpY1x3MpbAHdeo=",
-    },
-    {
-      id: 5,
-      name: "JCB Dump Truck",
-      type: "Dump Truck",
-      price: 2500,
-      image:
-        "https://media.istockphoto.com/id/636021590/photo/earth-mover-in-a-new-highway-construction-s3-poland.jpg?s=2048x2048&w=is&k=20&c=oCs8T2pN1IMqLVNlEMjwxV-GqgDoKEpY1x3MpbAHdeo=",
-    },
-  ];
+  useEffect(() => {
+    const fetchVehicles = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:8080/api/vehicles/listings"
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch vehicles");
+        }
+        const data = await response.json();
+        setVehicleListings(data);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Filter vehicles based on search term, type, and price range
-  const filteredVehicles = vehicleListings
+    fetchVehicles();
+  }, []);
+
+  // Ensure all vehicles are shown automatically on load and reset budget for "All"
+  useEffect(() => {
+    if (selectedType === "All") {
+      setBudget([6.7, 100]); // Full budget range when "All" is selected
+    } else {
+      setBudget([6.7, 100]);
+    }
+  }, [selectedType]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <ThreeDots color="#00BFFF" height={50} width={50} />
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  // Initialize Fuse.js for fuzzy searching
+  const fuse = new Fuse(vehicleListings, {
+    keys: ["VehicleName"], // Use VehicleName for fuzzy searching
+    threshold: 0.3, // sensitivity
+  });
+
+  // Fuzzy filter based on search term
+  const fuzzyFilteredVehicles = searchTerm
+    ? fuse.search(searchTerm).map((result) => result.item)
+    : vehicleListings;
+
+  // Filter vehicles based on selected type and price range
+  const filteredVehicles = fuzzyFilteredVehicles
     .filter((vehicle) => {
-      const matchesSearchTerm = vehicle.name
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase());
       const matchesType =
-        selectedType === "All" || vehicle.type === selectedType;
+        selectedType === "All" ||
+        vehicle.vehicleType.trim().toLowerCase() ===
+          selectedType.trim().toLowerCase();
+
+      const minPrice = budget[0] * 1000;
+      const maxPrice = budget[1] * 1000;
+
       const matchesPrice =
-        vehicle.price >= budget[0] * 1000 && vehicle.price <= budget[1] * 1000;
-      return matchesSearchTerm && matchesType && matchesPrice;
+        vehicle.price >= minPrice && vehicle.price <= maxPrice;
+
+      return matchesType && matchesPrice;
     })
     .sort((a, b) => {
+      console.log("Sorting vehicles:", a.price, b.price, sortOrder);
+      const priceA = Number(a.price);
+      const priceB = Number(b.price);
       if (sortOrder === "low-to-high") {
-        return a.price - b.price;
+        return priceA - priceB;
       } else if (sortOrder === "high-to-low") {
-        return b.price - a.price;
+        return priceB - priceA;
       }
-      return 0;
+      return 0; // No sorting
     });
 
   return (
@@ -111,9 +132,8 @@ export default function ConstructionRental() {
       <div className="flex flex-col md:flex-row gap-8 my-16 sm:my-10">
         {/* Mobile-first layout */}
         <div className="w-full md:hidden space-y-6">
-          {/* Choosing vehicle is imp */}
-
-          <Card>
+          {/* this was going to use for AI intigration but it can wait for to scaling project first */}
+          {/* <Card>
             <CardHeader>
               <CardTitle>
                 Choosing the correct construction vehicle is important.
@@ -134,7 +154,7 @@ export default function ConstructionRental() {
                 Find Vehicle →
               </Button>
             </CardFooter>
-          </Card>
+          </Card> */}
 
           {/* Search bar */}
           <div className="space-y-2">
@@ -152,16 +172,16 @@ export default function ConstructionRental() {
           <div className="space-y-2">
             <Label>Budget</Label>
             <Slider
-              min={0}
+              min={6.7} // Start from ₹6700
               max={100}
-              step={1}
-              value={[budget[1]]}
-              onValueChange={(value) => setBudget([budget[0], value[0]])}
+              step={0.1}
+              value={budget}
+              onValueChange={setBudget}
               className="[&>span]:bg-yellow-300 [&>span]:border-yellow-400"
             />
             <div className="flex justify-between text-sm text-muted-foreground">
-              <span>₹ {budget[0]}k</span>
-              <span>₹ {budget[1]}k</span>
+              <span>₹ {budget[0] * 1000}</span>
+              <span>₹ {budget[1] * 1000}</span>
             </div>
           </div>
 
@@ -210,66 +230,68 @@ export default function ConstructionRental() {
         </div>
 
         {/* Sidebar for desktop */}
-        <Card className="hidden md:block w-1/4 h-fit">
-          <CardContent className="space-y-6">
-            <div className="space-y-2">
-              <Label
-                htmlFor="desktop-search"
-                className="text-lg flex items-center justify-start py-2"
-              >
-                Search
-              </Label>
-              <Input
-                id="desktop-search"
-                type="search"
-                placeholder="Find vehicle"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-lg flex items-center justify-start py-2">
-                Budget
-              </Label>
-              <Slider
-                min={0}
-                max={80}
-                step={1}
-                value={[budget[1]]}
-                onValueChange={(value) => setBudget([budget[0], value[0]])}
-                className="[&>span]:bg-gray-200"
-              />
-              <div className="flex justify-between text-sm text-muted-foreground">
-                <span>₹ {budget[0]}k</span>
-                <span>₹ {budget[1]}k</span>
+        <div className="hidden md:block w-1/4 h-fit">
+          <Card className="h-full">
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <Label
+                  htmlFor="desktop-search"
+                  className="text-lg flex items-center justify-start py-2"
+                >
+                  Search
+                </Label>
+                <Input
+                  id="desktop-search"
+                  type="search"
+                  placeholder="Find vehicle"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
               </div>
-            </div>
-            <div className="space-y-2">
-              <Label>Vehicle Type</Label>
-              <div className="grid grid-cols-3 gap-2">
-                {vehicleTypes.map((type) => (
-                  <Button
-                    key={type.name}
-                    variant={
-                      selectedType === type.name ? "secondary" : "outline"
-                    }
-                    className={`h-20 ${
-                      selectedType === type.name
-                        ? "bg-yellow-400 text-yellow-900 hover:bg-yellow-500"
-                        : "hover:bg-yellow-100"
-                    }`}
-                    onClick={() => setSelectedType(type.name)}
-                  >
-                    <div className="flex flex-col items-center justify-center">
-                      <span className="text-2xl">{type.icon}</span>
-                      <span className="text-xs mt-1">{type.name}</span>
-                    </div>
-                  </Button>
-                ))}
+              <div className="space-y-2">
+                <Label className="text-lg flex items-center justify-start py-2">
+                  Budget
+                </Label>
+                <Slider
+                  min={6.7} // Start from ₹6700
+                  max={100}
+                  step={0.1}
+                  value={budget}
+                  onValueChange={setBudget}
+                  className="[&>span]:bg-yellow-200"
+                />
+                <div className="flex justify-between text-sm text-muted-foreground">
+                  <span>₹ {budget[0] * 1000}</span>
+                  <span>₹ {budget[1] * 1000}</span>
+                </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+              <div className="space-y-2">
+                <Label>Vehicle Type</Label>
+                <div className="grid grid-cols-3 gap-2">
+                  {vehicleTypes.map((type) => (
+                    <Button
+                      key={type.name}
+                      variant={
+                        selectedType === type.name ? "secondary" : "outline"
+                      }
+                      className={`h-20 ${
+                        selectedType === type.name
+                          ? "bg-yellow-400 text-yellow-900 hover:bg-yellow-500"
+                          : "hover:bg-yellow-100"
+                      }`}
+                      onClick={() => setSelectedType(type.name)}
+                    >
+                      <div className="flex flex-col items-center justify-center">
+                        <span className="text-2xl">{type.icon}</span>
+                        <span className="text-xs mt-1">{type.name}</span>
+                      </div>
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Vehicle listings */}
         <div className="w-full md:w-3/4 space-y-6">
@@ -280,13 +302,12 @@ export default function ConstructionRental() {
               <Label>Sort by</Label>
               <Select
                 value={sortOrder}
-                onChange={(e) => setSortOrder(e.target.value)}
+                onValueChange={(value) => setSortOrder(value)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Sort" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">None</SelectItem>
                   <SelectItem value="low-to-high">
                     Price: Low to High
                   </SelectItem>
@@ -299,21 +320,29 @@ export default function ConstructionRental() {
           </div>
 
           {/* Vehicle cards */}
-          <div className="grid aspect-auto grid-cols-2 gap-6 sm:grid-cols-3">
+          <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
             {filteredVehicles.map((vehicle) => (
-              <Card key={vehicle.id} className="overflow-hidden">
+              <Card key={vehicle._id} className="overflow-hidden">
                 <CardHeader>
-                  <CardTitle>{vehicle.name}</CardTitle>
+                  <CardTitle>{vehicle.VehicleName}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <img
-                    src={vehicle.image}
-                    alt={vehicle.name}
-                    className="w-full object-cover"
-                  />
-                  <div className="mt-2 flex items-center space-x-2 text-sm text-muted-foreground">
-                    <FaClock /> <span>24 hours rental</span>
+                  <div className="relative w-full pb-[56.25%]">
+                    {" "}
+                    {/* 16:9 aspect ratio */}
+                    <img
+                      src={`data:${vehicle.vehicleImages[0].contentType};base64,${vehicle.vehicleImages[0].data}`}
+                      alt={vehicle.VehicleName}
+                      className="absolute top-0 left-0 h-full w-full object-fill"
+                    />
                   </div>
+                  <div className="mt-2 flex items-center space-x-2 text-sm text-muted-foreground">
+                    <FaClock /> <span>Rental available</span>
+                  </div>
+                  <div className="mt-2 flex items-center space-x-2 text-sm text-muted-foreground">
+                    <FaClock /> <span>{vehicle.duration} Day</span>
+                  </div>
+                  {/* Show only price in ₹ */}
                   <div className="mt-1 flex items-center space-x-2 text-sm text-muted-foreground">
                     <FaTags /> <span>₹ {vehicle.price}</span>
                   </div>

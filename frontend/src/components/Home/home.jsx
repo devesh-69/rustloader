@@ -225,8 +225,8 @@ const Home = () => {
           backgroundImage: "url('../exacvater.png')",
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-white/0 to-white/50"></div>
-
+        <div className="absolute inset-0 bg-gradient-to-r from-black/40 to-transparent"></div>{" "}
+        {/* Updated gradient */}
         <div className="container mx-auto text-center md:py-16 relative z-10 flex flex-col justify-center h-full">
           <div className="max-w-lg mx-auto px-4 sm:px-6">
             <div className="text-center">

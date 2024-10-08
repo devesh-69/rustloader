@@ -52,8 +52,8 @@ const SignUp = () => {
       }
 
       try {
-        // const url = "http://localhost:8080/auth/signup";
-        const url = "https://rustloader-back.vercel.app/signup";
+        const url = "http://localhost:8080/auth/signup";
+        // const url = "https://rustloader-back.vercel.app/signup";
 
         // Create a FormData object
         const formData = new FormData();

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const About = () => {
   return (
-    <div className="flex flex-col min-h-screen bg-white">
+    <div className="flex flex-col min-h-screen bg-white mx-auto container">
       <main className="flex-1">
         <section className="w-full lg:py-32">
           <div className="container px-4 md:px-6 pt-20 lg:pt-0 scale-90">
@@ -14,14 +14,14 @@ const About = () => {
                     Kharido nahi Rent Karo!
                   </h1>
                   <p className="max-w-[600px] pb-4 text-gray-700 md:text-xl">
-                    RustLoader connects owners and renters of high-quality
-                    construction vehicles, simplifying the process and ensuring
-                    reliable access to the equipment you need.
+                    RustLoader connects construction vehicle owners with
+                    renters, simplifying the process and ensuring easy access to
+                    quality equipment for your projects.
                   </p>
                 </div>
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
                   <Link
-                    to="#"
+                    to="/vehicles"
                     className="inline-flex h-10 items-center justify-center rounded-md bg-yellow-300 px-8 text-sm font-medium text-gray-900 shadow transition-colors hover:bg-yellow-400 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                   >
                     Get Started
@@ -50,12 +50,16 @@ const About = () => {
                   Our Mission
                 </h2>
                 <p className="max-w-[900px] text-gray-700 md:text-xl/relaxed pt-5 lg:text-base/relaxed xl:text-xl/relaxed">
-                  At RustLoader, our mission is to simplify the connection
-                  between construction vehicle owners and renters, fostering a
-                  future of efficiency, reliability, and trust. We are driven by
-                  the values of innovation, trust, and efficiency, empowering
-                  our clients to access the equipment they need when they need
-                  it.
+                  At RustLoader, we believe that everyone deserves access to the
+                  tools they need to succeed, especially in the bustling world
+                  of construction. Our mission is to connect construction
+                  vehicle owners with those who might not have the resources to
+                  buy their own vehicles. Whether you're a startup with limited
+                  needs or a growing company looking to save costs, we provide a
+                  platform where you can easily rent construction vehicles for a
+                  day or more. Our goal is to simplify the renting process,
+                  ensuring that no project is held back due to a lack of
+                  equipment.
                 </p>
               </div>
             </div>
@@ -69,12 +73,12 @@ const About = () => {
                   Our Journey
                 </h2>
                 <p className="max-w-[900px] text-gray-700 md:text-xl/relaxed py-8 lg:text-base/relaxed xl:text-xl/relaxed">
-                  Since our founding in 2015, RustLoader has been on a mission
-                  to revolutionize the construction equipment rental industry.
-                  Here's a glimpse of our journey:
+                  Since we launched RustLoader in 2024, we've been on an
+                  exciting adventure to reshape the construction equipment
+                  rental landscape. Here's a glimpse of our journey:
                 </p>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-5xl">
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-5xl  scale-95">
                 <div className="bg-gray-50 rounded-lg p-6 shadow-sm transition-transform transform hover:scale-105">
                   <h3 className="text-xl font-bold text-gray-900">2024</h3>
                   <p className="text-gray-700">Founded</p>
@@ -120,7 +124,7 @@ const About = () => {
                   revolutionizing the construction equipment rental industry.
                 </p>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 w-full max-w-6xl">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 w-full max-w-6xl  scale-95">
                 <div className="bg-gray-50 rounded-lg p-6 shadow-sm transition-transform transform hover:scale-105">
                   <div className="flex items-center gap-4">
                     <img
@@ -187,7 +191,7 @@ const About = () => {
                     />
                     <div>
                       <h3 className="text-lg font-bold text-gray-900">
-                        Mruthunjay
+                        Mrutyunjay
                       </h3>
                       <p className="text-gray-700">COO</p>
                     </div>
