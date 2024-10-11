@@ -1,11 +1,16 @@
 import React, { useState } from "react";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+  Outlet,
+} from "react-router-dom";
+import { RefreshHandler } from "./components/RefreshHandler";
 import NavBar from "./components/Navbar/navbar";
 import Footer from "./components/Footer/footer";
-import {
-  createBrowserRouter,
-  Navigate,
-  RouterProvider,
-} from "react-router-dom";
+import Dashboard from "./components/Dashboard/Dashboard";
+import Login from "./components/CustomerLogin/Login";
 import Home from "./components/Home/home";
 import About from "./components/About/about";
 import Contact from "./components/Contact/contact";
@@ -13,10 +18,12 @@ import Vehicles from "./components/Vehicles/vehicles";
 import FAQs from "./components/FAQ/faq";
 import OwnerPage from "./components/Owners/owner";
 import CheckOutPage from "./components/CheckOutPage/CheckOut";
-import Dashboard from "./components/Dashboard/Dashboard";
-import SignUp from "./components/CustomerLogin/signUp";
-import Login from "./components/CustomerLogin/login";
-// import { RefreshHandler } from "./components/RefreshHandler";
+import SignUp from "./components/CustomerLogin/SignUp";
+
+const PrivateRoute = () => {
+  const token = localStorage.getItem("token");
+  return token ? <Outlet /> : <Navigate to="/login" />;
+};
 
 function Layout({ children }) {
   return (
@@ -29,100 +36,28 @@ function Layout({ children }) {
 }
 
 function App() {
-  // const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  // const PrivateRoute = ({ element }) => {
-  //   return isAuthenticated ? element : <Navigate to="/login" />;
-  // };
-
-  const router = createBrowserRouter([
-    {
-      path: "/",
-      element: (
-        <Layout>
-          <Home />
-        </Layout>
-      ),
-    },
-    {
-      path: "/about",
-      element: (
-        <Layout>
-          <About />
-        </Layout>
-      ),
-    },
-    {
-      path: "/contact",
-      element: (
-        <Layout>
-          <Contact />
-        </Layout>
-      ),
-    },
-    {
-      path: "/vehicles",
-      element: (
-        <Layout>
-          <Vehicles />
-        </Layout>
-      ),
-    },
-    {
-      path: "/faqs",
-      element: (
-        <Layout>
-          <FAQs />
-        </Layout>
-      ),
-    },
-    {
-      path: "/owners",
-      element: (
-        <Layout>
-          <OwnerPage />
-        </Layout>
-      ),
-    },
-    {
-      path: "/checkout",
-      element: (
-        <Layout>
-          {/* <PrivateRoute element={<CheckOutPage />} /> */}
-          <CheckOutPage />
-        </Layout>
-      ),
-    },
-    {
-      path: "/dashboard",
-      element: (
-        <Layout>
-          <Dashboard />
-        </Layout>
-      ),
-    },
-    {
-      path: "/signUp",
-      element: (
-        <Layout>
-          <SignUp />
-        </Layout>
-      ),
-    },
-    {
-      path: "/login",
-      element: (
-        <Layout>
-          <Login />
-        </Layout>
-      ),
-    },
-  ]);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   return (
-    <RouterProvider router={router}>
-      {/* <RefreshHandler setIsAuthenticated={setIsAuthenticated} /> */}
-    </RouterProvider>
+    <Router>
+      <RefreshHandler setIsAuthenticated={setIsAuthenticated} />
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/vehicles" element={<Vehicles />} />
+          <Route path="/faqs" element={<FAQs />} />
+          <Route path="/owners" element={<OwnerPage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route element={<PrivateRoute />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/checkout" element={<CheckOutPage />} />
+          </Route>
+        </Routes>
+      </Layout>
+    </Router>
   );
 }
 

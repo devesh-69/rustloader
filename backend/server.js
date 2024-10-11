@@ -1,37 +1,28 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const AuthRouter = require("./Routes/AuthRouter");
-const ProductRouter = require("./Routes/ProductRouter");
-const VehicleRouter = require("./Routes/VehicleRouter");
+const AuthRouter = require("./routes/AuthRouter");
+const VehicleRouter = require("./routes/VehicleRouter");
+const OwnerRouter = require("./routes/ownerRoutes");
 
-// Required files
 require("dotenv").config();
-require("./Models/database");
+require("./models/database");
 
-// Initialize the app
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8080
 const app = express();
 
-// Middleware and routes here
 app.use(express.json());
 app.use(cors());
-app.use("/auth", AuthRouter);
-app.use("/products", ProductRouter);
-app.use("/api/vehicles", VehicleRouter);
 
-// Routes
+// Add routes
+app.use("/auth", AuthRouter);
+app.use("/api/vehicles", VehicleRouter);
+app.use("/owner", OwnerRouter);
+
 app.get("/", (req, res) => {
   res.send("Welcome to the homepage!");
 });
 
-// Error handling middleware (optional)
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send("Something broke!");
-});
-
-// Start the server
 app.listen(PORT, () => {
   console.log(`Server running on ${PORT}`);
 });

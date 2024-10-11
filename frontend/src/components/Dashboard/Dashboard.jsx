@@ -7,6 +7,7 @@ import {
   FaUsers,
   FaDollarSign,
   FaCar,
+  FaSignOutAlt,
   FaBell,
   FaFileAlt,
   FaArrowRight,
@@ -15,6 +16,8 @@ import {
   FaMapPin,
   FaCog,
 } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 
 const Dashboard = () => {
   const [earningsData, setEarningsData] = useState([]);
@@ -27,10 +30,16 @@ const Dashboard = () => {
     months: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
   };
 
+  const navigate = useNavigate();
+
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login');
+    }
+
     const fetchEarnings = async () => {
       try {
-        // Replace with your API endpoint
         const response = await axios.get("/api/earnings", {
           params: { timeFrame },
         });
@@ -171,6 +180,22 @@ const Dashboard = () => {
     },
   ];
 
+  const handleLogout = () => {
+    try {
+      localStorage.removeItem("token");
+      localStorage.removeItem("isKYCCompleted");
+      localStorage.removeItem("isRegistered");
+      toast.success("Logout successful!");
+
+      // Redirect after a delay
+      setTimeout(() => {
+        navigate("/owners");
+      }, 1000);
+    } catch (error) {
+      toast.error("Failed to logout");
+    }
+  };
+
   return (
     <div className="container mx-auto">
       <div className="flex h-screen bg-gray-100">
@@ -228,6 +253,13 @@ const Dashboard = () => {
               <FaCog size={20} />
               <span className="ml-2 hidden md:inline">User Settings</span>
             </a>
+            <button
+              onClick={handleLogout}
+              className="flex items-center p-4 text-gray-800 border-b border-gray-200 w-full text-left"
+            >
+              <FaSignOutAlt size={20} />
+              <span className="ml-2 hidden md:inline">Logout</span>
+            </button>
           </nav>
         </div>
 
@@ -351,6 +383,7 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };

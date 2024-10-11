@@ -1,15 +1,3 @@
-// const multer = require("multer");
-
-// // Use memory storage for multer
-// const storage = multer.memoryStorage();
-// const upload = multer({ storage });
-
-// const uploadVehicleMiddleware = upload.fields([
-//   { name: "vehicleImages", maxCount: 4 }, // Accept only to 4 images
-// ]);
-
-// module.exports = uploadVehicleMiddleware;
-
 const multer = require("multer");
 
 // Define allowed file types

@@ -55,7 +55,7 @@ const Login = () => {
           // Store token and navigate
           localStorage.setItem("token", jwtToken);
           localStorage.setItem("LoggedInUser", name);
-          navigate("/");
+          navigate("/dashboard");
         } else {
           toast.error(message || "Login failed");
         }

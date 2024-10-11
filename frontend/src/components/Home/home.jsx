@@ -1,94 +1,24 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination } from "swiper/modules";
+import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import Reviews from "../reviews/Reviews";
 import { ChevronRight } from "lucide-react";
 
-// SVG Icon components
-function BoltIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-      <circle cx="12" cy="12" r="4" />
-    </svg>
-  );
-}
-
-function BriefcaseIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
-      <rect width="20" height="14" x="2" y="6" rx="2" />
-    </svg>
-  );
-}
-
-function LockIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
-      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-    </svg>
-  );
-}
-
-function RocketIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" />
-      <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" />
-      <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0" />
-      <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
-    </svg>
-  );
-}
+const LocationIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="gray"
+    className="w-5 h-5"
+  >
+    <path
+      fillRule="evenodd"
+      d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
+    />
+  </svg>
+);
 
 const VehicleCard = ({ imageSrc, altText, title, category, linkTo }) => (
   <div className="bg-white rounded-sm shadow-md hover:shadow-sm transition-all duration-300 overflow-hidden">
@@ -183,19 +113,37 @@ const Home = () => {
     },
   ];
 
+  const [location, setLocation] = useState("");
+  const [date, setDate] = useState("");
   const [isMobile, setIsMobile] = useState(false);
   const [showSwipeHint, setShowSwipeHint] = useState(true);
   const hintTimeoutRef = useRef(null);
+  const navigate = useNavigate();
+  const routerLocation = useLocation();
+
+  const loadDataFromLocalStorage = () => {
+    const savedLocation = localStorage.getItem("userLocation");
+    const savedDate = localStorage.getItem("userDate");
+    if (savedLocation) setLocation(savedLocation);
+    if (savedDate) setDate(savedDate);
+  };
+
+  useEffect(() => {
+    loadDataFromLocalStorage();
+  }, [routerLocation]);
 
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 440);
     };
 
-    handleResize();
+    handleResize(); // Check on initial load
     window.addEventListener("resize", handleResize);
 
-    startHintTimer();
+    // Start hint timer
+    hintTimeoutRef.current = setTimeout(() => {
+      setShowSwipeHint(false);
+    }, 3000); // Show hint for 3 seconds
 
     return () => {
       window.removeEventListener("resize", handleResize);
@@ -203,92 +151,164 @@ const Home = () => {
     };
   }, []);
 
-  const startHintTimer = () => {
-    clearTimeout(hintTimeoutRef.current);
-    hintTimeoutRef.current = setTimeout(() => {
-      setShowSwipeHint(false);
-    }, 3000);
+  const handleLocationChange = (e) => {
+    setLocation(e.target.value);
   };
 
-  const handleTouchStart = () => {
-    clearTimeout(hintTimeoutRef.current);
-    setShowSwipeHint(false);
-    console.log("Touch started");
+  const handleDateChange = (e) => {
+    setDate(e.target.value);
+  };
+
+  const handleUseCurrentLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          try {
+            const response = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+            );
+            const data = await response.json();
+            const address = data.display_name;
+            setLocation(address);
+          } catch (error) {
+            console.error("Error fetching address:", error);
+            setLocation(`Lat: ${latitude.toFixed(4)}, Lng: ${longitude.toFixed(4)}`);
+          }
+        },
+        () => {
+          alert("Error: The Geolocation service failed.");
+        }
+      );
+    } else {
+      alert("Error: Your browser doesn't support geolocation.");
+    }
+  };
+
+  const handleBookNow = () => {
+    localStorage.setItem("userLocation", location);
+    localStorage.setItem("userDate", date);
+    setLocation("");
+    setDate("");
+    navigate("/vehicles");
   };
 
   return (
-    <div>
+    <>
       {/* Hero Section */}
-      <section
-        className="relative bg-cover bg-center h-[550px] md:h-[650px] text-white"
-        style={{
-          backgroundImage: "url('../exacvater.png')",
-        }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-r from-black/40 to-transparent"></div>{" "}
-        {/* Updated gradient */}
-        <div className="container mx-auto text-center md:py-16 relative z-10 flex flex-col justify-center h-full">
-          <div className="max-w-lg mx-auto px-4 sm:px-6">
-            <div className="text-center">
-              <h1 className="text-3xl md:text-5xl font-extrabold drop-shadow-2xl sm:pt-8 md:pt-12 animate-fadeIn">
+      <section className="relative h-[450px] sm:h-[550px] md:h-[650px] text-white overflow-hidden">
+        <div className="flex flex-col md:flex-row h-full">
+          {/* Left side content */}
+          <div className="w-full md:w-1/2 flex flex-col justify-center md:pt-0 pt-28 px-12 md:px-8 z-10 relative">
+            {/* Gradient overlay for mobile: top-to-bottom */}
+            <div className="absolute inset-0 bg-gradient-to-b from-gray-900 via-gray-700 to-transparent sm:bg-gradient-to-r sm:to-transparent"></div>
+
+            <div className="relative z-10 px-2 sm:px-4 md:px-10 lg:px-14">
+              <h1 className="text-3xl sm:text-2xl md:text-4xl lg:text-5xl font-extrabold drop-shadow-2xl mb-1 sm:mb-4">
                 Kharido nahi Rent Karo!
               </h1>
-              <p className="text-sm sm:text-base md:text-lg mt-4 sm:mt-6 text-white font-medium drop-shadow-md transition-transform duration-500 ease-in-out transform hover:scale-95">
+              <p className="text-xs sm:text-sm md:text-lg mb-3 sm:mb-6 font-medium drop-shadow-md pb-4">
                 Your One-stop platform for all construction vehicle needs.
               </p>
-            </div>
 
-            <div className="mt-6 sm:mt-8 flex flex-col items-center">
               {/* Booking Container */}
-              <div className="booking-container flex flex-col sm:flex-row items-center bg-gray-900 bg-opacity-90 backdrop-blur-lg p-4 sm:p-6 md:p-8 border border-yellow-400 rounded-3xl shadow-3xl w-full sm:w-[90%] md:w-[80%] lg:w-[550px] xl:w-[700px] my-6 font-sans transform transition-all duration-700 hover:shadow-sm">
+              <div className="booking-container bg-gray-900 bg-opacity-85 backdrop-blur-lg p-4 sm:p-4 md:p-5 lg:p-6 border border-yellow-400 rounded-lg sm:rounded-2xl shadow-3xl w-full max-w-xs sm:max-w-sm md:max-w-md">
                 {/* Site Location Input */}
-                <div className="input-group flex flex-col sm:mr-4 md:mr-6 w-full">
+                <div className="mb-4 sm:mb-4 relative">
                   <label
                     htmlFor="pickup-place"
-                    className="text-xs sm:text-sm text-yellow-400 font-bold mb-2"
+                    className="text-xs sm:text-sm text-yellow-400 font-bold mb-2 sm:mb-2 block"
                   >
                     Site Location
                   </label>
-                  <input
-                    type="text"
-                    id="pickup-place"
-                    placeholder="Enter pickup place"
-                    className="border-2 border-gray-600 p-2 sm:p-3 rounded-md text-sm sm:text-base bg-gray-800 text-white transition duration-300 ease-in-out focus:outline-none focus:border-yellow-500 focus:bg-gray-700 focus:shadow-lg"
-                  />
+                  <div className="relative">
+                    <input
+                      type="text"
+                      id="pickup-place"
+                      placeholder="Enter pickup place"
+                      className="w-full border-2 border-gray-600 p-2 sm:p-2 pr-8 overflow-auto rounded-md text-xs sm:text-sm md:text-base bg-gray-800 text-white focus:outline-none focus:border-yellow-500 focus:bg-gray-700"
+                      value={location}
+                      onChange={handleLocationChange}
+                    />
+                    <button
+                      onClick={handleUseCurrentLocation}
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 text-yellow-400"
+                      aria-label="Use current location"
+                    >
+                      <LocationIcon />
+                    </button>
+                  </div>
                 </div>
 
                 {/* Date Input */}
-                <div className="input-group flex flex-col sm:mr-4 md:mr-6 w-full mt-4 sm:mt-0">
+                <div className="mb-4 sm:mb-4">
                   <label
                     htmlFor="pickup-date"
-                    className="text-xs sm:text-sm text-yellow-400 font-bold mb-2"
+                    className="text-xs sm:text-sm text-yellow-400 font-bold mb-2 sm:mb-2 block"
                   >
-                    Pick Date
+                    Pickup Date
                   </label>
                   <input
                     type="date"
                     id="pickup-date"
-                    className="border-2 border-gray-600 p-2 sm:p-3 w-full rounded-md text-sm sm:text-base bg-gray-800 text-gray-400 transition duration-300 ease-in-out focus:outline-none focus:border-yellow-500 focus:bg-gray-700 focus:shadow-lg"
+                    className="w-full border-2 border-gray-600 p-2 sm:p-2 rounded-md text-xs sm:text-sm md:text-base bg-gray-800 text-white focus:outline-none focus:border-yellow-500 focus:bg-gray-700"
+                    value={date}
+                    onChange={handleDateChange}
                   />
                 </div>
 
                 {/* Book Now Button */}
-                <button className="book-now-btn border border-transparent p-2 md:mt-6 mt-6 md:w-80 w-full sm:mt-4 bg-yellow-300 text-black rounded-xl text-sm sm:text-md md:text-lg font-bold cursor-pointer transition-all duration-500 ease-in-out transform hover:bg-gradient-to-br hover:from-yellow-300 hover:to-yellow-300 hover:scale-95 hover:shadow-sm active:scale-90 active:bg-yellow-300">
+                <button
+                  onClick={handleBookNow}
+                  className="w-full bg-yellow-400 text-gray-900 py-2 px-4 rounded-md text-sm font-bold hover:bg-yellow-500 transition-colors duration-300"
+                >
                   Book Now
                 </button>
               </div>
             </div>
           </div>
+
+          {/* Right side video */}
+          <div className="w-full md:w-1/2 md:relative h-full md:h-full">
+            <div className="absolute inset-0 md:mt-0 lg:mt-20">
+              <Swiper
+                className="w-full h-full"
+                loop={true}
+                autoplay={{ delay: 3000, disableOnInteraction: false }}
+                speed={2000}
+                modules={[Autoplay]}
+              >
+                {[
+                  "/Bulldozer.mp4",
+                  "/Concrete_truck.mp4",
+                  "/Excavator.mp4",
+                  "/Road_roller.mp4",
+                ].map((src, index) => (
+                  <SwiperSlide key={index}>
+                    <video
+                      className="w-full h-full object-cover"
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                    >
+                      <source src={src} type="video/mp4" />
+                      Your browser does not support the video.
+                    </video>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Unified Vehicle Showcase Section */}
+      {/* Vehicle Showcase Section */}
       <section className="bg-gray-50 py-2">
         <div className="container mx-auto px-4 scale-90">
           <h2 className="text-2xl sm:text-4xl font-bold mb-12 text-center">
             Vehicle <span className="text-primary">Showcase</span>
           </h2>
-
           {isMobile ? (
             <div className="relative">
               {showSwipeHint && (
@@ -303,7 +323,6 @@ const Home = () => {
                 pagination
                 modules={[Navigation, Pagination]}
                 className="mySwiper"
-                onTouchStart={handleTouchStart}
               >
                 {vehicles.map((vehicle, index) => (
                   <SwiperSlide key={index} className="p-2 lg:p-0">
@@ -314,37 +333,6 @@ const Home = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {vehicles.map((vehicle, index) => (
-                <VehicleCard key={index} {...vehicle} />
-              ))}
-            </div>
-          )}
-
-          {isMobile ? (
-            <div className="relative">
-              {showSwipeHint && (
-                <div className="absolute inset-0 flex items-center justify-center z-10">
-                  <div className="bg-gray-700 text-yellow-300 text-xs px-4 py-2 rounded-full opacity-75 animate-pulse">
-                    Swipe to see more &rarr;
-                  </div>
-                </div>
-              )}
-              <Swiper
-                navigation
-                pagination
-                modules={[Navigation, Pagination]}
-                className="mySwiper"
-                onTouchStart={handleTouchStart}
-              >
-                {vehicles.map((vehicle, index) => (
-                  <SwiperSlide key={index} className="p-2 lg:p-0">
-                    <VehicleCard {...vehicle} />
-                  </SwiperSlide>
-                ))}
-              </Swiper>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:hidden gap-6">
               {vehicles.map((vehicle, index) => (
                 <VehicleCard key={index} {...vehicle} />
               ))}
@@ -397,7 +385,7 @@ const Home = () => {
           <p>&copy; 2024 RustLoader. All rights reserved.</p>
         </div>
       </footer>
-    </div>
+    </>
   );
 };
 
