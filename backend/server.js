@@ -8,7 +8,7 @@ const OwnerRouter = require("./routes/ownerRoutes");
 require("dotenv").config();
 require("./models/database");
 
-const PORT = process.env.PORT || 8080
+const PORT = process.env.PORT || 8080;
 const app = express();
 
 app.use(express.json());
@@ -21,6 +21,10 @@ app.use("/owner", OwnerRouter);
 
 app.get("/", (req, res) => {
   res.send("Welcome to the homepage!");
+});
+
+app.get("/test", (req, res) => {
+  res.send("Testing if it's working or not TEMP!");
 });
 
 app.listen(PORT, () => {
