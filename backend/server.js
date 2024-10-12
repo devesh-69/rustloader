@@ -21,11 +21,7 @@ app.use("/api/vehicles", VehicleRouter);
 app.use("/owner", OwnerRouter);
 
 app.get("/", (req, res) => {
-  res.send("Welcome to the homepage!");
-});
-
-app.get("/test", (req, res) => {
-  res.send("Testing if it's working or not TEMP!");
+  res.send("Welcome to the RustLoader!");
 });
 
 app.listen(PORT, () => {
