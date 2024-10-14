@@ -328,13 +328,18 @@ export default function ConstructionRental() {
                 </CardHeader>
                 <CardContent>
                   <div className="relative w-full pb-[56.25%]">
-                    {" "}
-                    {/* 16:9 aspect ratio */}
-                    <img
-                      src={`data:${vehicle.vehicleImages[0].contentType};base64,${vehicle.vehicleImages[0].data}`}
-                      alt={vehicle.VehicleName}
-                      className="absolute top-0 left-0 h-full w-full object-fill"
-                    />
+                    {/* Check if vehicleImages exists and has at least one image */}
+                    {vehicle.vehicleImages && vehicle.vehicleImages.length > 0 ? (
+                      <img
+                        src={`data:${vehicle.vehicleImages[0].contentType};base64,${vehicle.vehicleImages[0].data}`}
+                        alt={vehicle.VehicleName}
+                        className="absolute top-0 left-0 h-full w-full object-fill"
+                      />
+                    ) : (
+                      <div className="absolute top-0 left-0 h-full w-full flex items-center justify-center bg-gray-200">
+                        <span>No Image Available</span>
+                      </div>
+                    )}
                   </div>
                   <div className="mt-2 flex items-center space-x-2 text-sm text-muted-foreground">
                     <FaClock /> <span>Rental available</span>
