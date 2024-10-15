@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { FaSignOutAlt } from "react-icons/fa"; // Import logout icon
 
 const NavBar = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -27,9 +28,18 @@ const NavBar = () => {
     [navigate]
   );
 
+  const handleLogout = useCallback(() => {
+    console.log("Logout function called"); // Debug log
+    localStorage.removeItem("token");
+    localStorage.removeItem("LoggedInUser");
+    localStorage.removeItem("userDate");
+    localStorage.removeItem("userLocation");
+    navigate("/login");
+  }, [navigate]);
+
   const handleListVehicle = useCallback(() => {
     console.log("handleListVehicle called"); // Debug log
-    navigate('/dashboard');
+    navigate("/dashboard");
     console.log("Navigation attempted"); // Debug log
   }, [navigate]);
 
@@ -131,15 +141,26 @@ const NavBar = () => {
               className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50"
             >
               <ul className="py-1">
-                {["Customer", "Owner"].map((role) => (
-                  <li
-                    key={role}
-                    className="block px-4 py-2 text-gray-800 hover:bg-yellow-100 cursor-pointer"
-                    onClick={() => handleLoginRedirect(role.toLowerCase())}
+                <li className="flex items-center justify-between px-4 py-2 text-gray-800 hover:bg-yellow-100 cursor-pointer">
+                  <span
+                    onClick={() => handleLoginRedirect("customer")}
+                    className="flex-grow"
                   >
-                    {role} Login
-                  </li>
-                ))}
+                    Customer Login
+                  </span>
+                  <span
+                    onClick={handleLogout} // Make logout icon clickable
+                    className="ml-2 cursor-pointer text-gray-800 hover:text-red-500"
+                  >
+                    <FaSignOutAlt />
+                  </span>
+                </li>
+                <li className="flex items-center justify-between px-4 py-2 text-gray-800 hover:bg-yellow-100 cursor-pointer">
+                  <span onClick={() => handleLoginRedirect("owner")}>
+                    Owner Login
+                  </span>
+                  {/* No logout icon for owner */}
+                </li>
               </ul>
             </div>
           )}

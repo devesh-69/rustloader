@@ -47,15 +47,17 @@ const Login = () => {
         });
 
         const result = await response.json();
-        console.log("Server response:", result); // Log server response for debugging
+        console.log("Server response:", result);
 
-        const { success, message, jwtToken, name } = result;
+        const { success, message, jwtToken, name } = result; // Assuming role is not needed
 
         if (success) {
-          // Store token and navigate
+          // Store token and user info
           localStorage.setItem("token", jwtToken);
           localStorage.setItem("LoggedInUser", name);
-          navigate("/dashboard");
+
+          // Redirect to home page for customers
+          navigate("/home");
         } else {
           toast.error(message || "Login failed");
         }
@@ -129,7 +131,7 @@ const Login = () => {
 
         {/* Submit Button */}
         <span>
-          {" Don't Have a Account yet? "}
+          {" Don't Have an Account yet? "}
           <Link to="/signup" className="text-blue-600 underline">
             Register here
           </Link>

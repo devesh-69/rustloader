@@ -53,7 +53,6 @@ const SignUp = () => {
 
       try {
         const url = "http://localhost:8080/auth/signup";
-        // const url = "https://rustloader-back.vercel.app/signup";
 
         // Create a FormData object
         const formData = new FormData();
@@ -313,7 +312,7 @@ const SignUp = () => {
           type="submit"
           className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-500"
         >
-          Login
+          Register
         </button>
       </form>
       <ToastContainer />

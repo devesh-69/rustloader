@@ -21,12 +21,13 @@ import {
 } from "@/components/ui/select";
 import { ThreeDots } from "react-loader-spinner";
 import Fuse from "fuse.js";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function ConstructionRental() {
   const location = useLocation();
   const query = new URLSearchParams(location.search);
   const category = query.get("category");
+  const navigate = useNavigate();
 
   const [isOpen, setIsOpen] = useState(false);
   const [budget, setBudget] = useState([6.7, 100]); // Default budget range for 'All' is full range
@@ -134,7 +135,10 @@ export default function ConstructionRental() {
 
   // Filter vehicles based on the selected category
   const categoryFilteredVehicles = category
-    ? filteredVehicles.filter(vehicle => vehicle.vehicleType.toLowerCase() === category.toLowerCase())
+    ? filteredVehicles.filter(
+        (vehicle) =>
+          vehicle.vehicleType.toLowerCase() === category.toLowerCase()
+      )
     : filteredVehicles; // Show all vehicles if no category is selected
 
   return (
@@ -367,6 +371,7 @@ export default function ConstructionRental() {
                   <Button
                     variant="link"
                     className="p-0 text-yellow-500 hover:text-yellow-600"
+                    onClick={() => navigate(`/checkout/${vehicle._id}`)} // Navigate to checkout page with vehicle _id
                   >
                     Rent now →
                   </Button>

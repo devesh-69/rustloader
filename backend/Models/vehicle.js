@@ -12,6 +12,7 @@ const VehicleSchema = new mongoose.Schema({
   otherDetails: { type: String },
   price: { type: Number, required: true },
   duration: { type: Number, required: true },
+  isAvailable: { type: Boolean, default: true },
   vehicleImages: [
     {
       data: Buffer,

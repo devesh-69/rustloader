@@ -1,45 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { StarIcon } from "lucide-react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-const images = [
-  {
-    src: "/placeholder.svg?height=400&width=600",
-    alt: "Excavator X211 front view",
-  },
-  {
-    src: "/placeholder.svg?height=400&width=600",
-    alt: "Excavator X211 side view",
-  },
-  {
-    src: "/placeholder.svg?height=400&width=600",
-    alt: "Excavator X211 back view",
-  },
-];
-
-const reviews = [
-  {
-    id: 1,
-    author: "John Doe",
-    rating: 4,
-    comment: "Great excavator, very powerful and efficient.",
-    date: "2024-05-15",
-  },
-  {
-    id: 2,
-    author: "Jane Smith",
-    rating: 5,
-    comment: "Excellent machine, exceeded my expectations!",
-    date: "2024-06-02",
-  },
-];
-
 const CheckOut = () => {
+  const { id } = useParams(); // Get the vehicle ID from the URL
+  const [vehicle, setVehicle] = useState(null);
   const [currentImage, setCurrentImage] = useState(0);
   const [userReview, setUserReview] = useState({ rating: 0, comment: "" });
   const [isReviewing, setIsReviewing] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Fetch vehicle details by ID
+    const fetchVehicleDetails = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8080/api/vehicles/${id}`
+        );
+        const data = await response.json();
+        setVehicle(data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching vehicle:", error);
+      }
+    };
+
+    fetchVehicleDetails();
+  }, [id]);
 
   const handleStarClick = (rating) => {
     setUserReview((prev) => ({ ...prev, rating }));
@@ -53,6 +44,29 @@ const CheckOut = () => {
     console.log("Submitting review:", userReview);
     setIsReviewing(false);
     setUserReview({ rating: 0, comment: "" });
+  };
+
+  const handleCheckout = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/vehicles/rent/${id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.ok) {
+        alert("Vehicle rented successfully!");
+        navigate("/confirmation"); // Redirect to confirmation page or handle successful checkout
+      } else {
+        alert("Error in renting vehicle");
+      }
+    } catch (error) {
+      console.error("Error during checkout:", error);
+    }
   };
 
   const settings = {
@@ -82,6 +96,8 @@ const CheckOut = () => {
     ],
   };
 
+  if (loading) return <div>Loading...</div>;
+
   return (
     <div className="container mx-auto space-y-16 scale-90">
       <div className="flex flex-col lg:flex-row gap-6 lg:scale-90">
@@ -89,15 +105,24 @@ const CheckOut = () => {
         <div className="bg-white border rounded-lg shadow-md flex flex-col flex-1">
           <div className="p-4 flex-1 space-y-4">
             <div className="relative flex justify-center">
-              <img
-                src="/buldozer.png"
-                // src={images[currentImage].src}
-                alt={images[currentImage].alt}
-                className="object-contain rounded-lg w-auto h-100"
-              />
+              {vehicle &&
+              vehicle.vehicleImages &&
+              vehicle.vehicleImages.length > 0 ? (
+                <img
+                  src={`data:${vehicle.vehicleImages[0].contentType};base64,${vehicle.vehicleImages[0].data}`}
+                  alt={vehicle.VehicleName}
+                  className="object-contain rounded-lg w-auto h-100"
+                />
+              ) : (
+                <img
+                  src="/buldozer.png" // Placeholder image if no image is available
+                  alt="Default Vehicle"
+                  className="object-contain rounded-lg w-auto h-100"
+                />
+              )}
             </div>
             <div className="flex justify-center space-x-2 overflow-x-auto py-6">
-              {images.map((image, index) => (
+              {vehicle?.vehicleImages?.map((image, index) => (
                 <button
                   key={index}
                   onClick={() => setCurrentImage(index)}
@@ -106,7 +131,7 @@ const CheckOut = () => {
                   }`}
                 >
                   <img
-                    src={image.src}
+                    src={`data:${image.contentType};base64,${image.data}`}
                     alt={`Thumbnail ${index + 1}`}
                     className="object-cover rounded w-full h-full"
                   />
@@ -115,21 +140,26 @@ const CheckOut = () => {
             </div>
           </div>
 
-          {/* Rent now */}
+          {/* Rent Now Button */}
           <div className="p-4">
-            <h2 className="text-xl sm:text-2xl font-bold">Excavator X211</h2>
+            <h2 className="text-xl sm:text-2xl font-bold">
+              {vehicle?.VehicleName || "N/A"}
+            </h2>
             <p className="text-sm sm:text-base text-gray-600">
-              Heavy-duty excavator for construction projects
+              {vehicle?.vehicleType || "N/A"} for construction projects
             </p>
             <div className="flex justify-center mt-4 lg:mt-8">
-              <button className="bg-yellow-300 hover:bg-yellow-500 py-3 px-4 w-full rounded text-gray-800 font-semibold text-lg">
-                Rent Now
+              <button
+                className="bg-yellow-300 hover:bg-yellow-500 py-3 px-4 w-full rounded text-gray-800 font-semibold text-lg"
+                onClick={handleCheckout}
+              >
+                Confirm and Rent Now
               </button>
             </div>
           </div>
         </div>
 
-        {/* Vehicle section */}
+        {/* Vehicle details section */}
         <div className="bg-white border rounded-lg flex flex-col flex-1 animate-fadeIn">
           <div className="p-4 flex-1 text-left">
             <h3 className="text-lg sm:text-xl pt-1 pb-8 px-3 lg:text-2xl font-semibold font-spartan">
@@ -138,19 +168,19 @@ const CheckOut = () => {
             <div className="grid grid-cols-2 gap-4 text-sm sm:text-base px-3">
               <div>
                 <p className="font-semibold">Company Name</p>
-                <p>JCB</p>
+                <p>{vehicle?.companyName || "N/A"}</p>
               </div>
               <div>
                 <p className="font-semibold">Model Name</p>
-                <p>X211</p>
+                <p>{vehicle?.VehicleName || "N/A"}</p>
               </div>
               <div>
                 <p className="font-semibold">Fuel Type</p>
-                <p>Diesel</p>
+                <p>{vehicle?.fuelType || "N/A"}</p>
               </div>
               <div>
                 <p className="font-semibold">Max Distance</p>
-                <p>100km</p>
+                <p>{vehicle?.maxDistance || "N/A"}</p>
               </div>
             </div>
           </div>
@@ -162,10 +192,10 @@ const CheckOut = () => {
             </h3>
             <div className="grid grid-cols-1 min-[320px]:grid-cols-2 gap-4">
               {[
-                { label: "Model", value: "X211" },
-                { label: "Engine", value: "Diesel" },
-                { label: "Vehicle Width", value: "2.5 meters" },
-                { label: "Operating Weight", value: "22 Ton" },
+                { label: "Model", value: vehicle?.VehicleName || "N/A" },
+                { label: "Engine", value: vehicle?.fuelType || "N/A" },
+                { label: "Vehicle Width", value: vehicle?.width || "N/A" },
+                { label: "Operating Weight", value: vehicle?.weight || "N/A" },
               ].map((spec, index) => (
                 <div
                   key={index}
@@ -192,52 +222,8 @@ const CheckOut = () => {
                 </div>
               ))}
             </div>
-            <h4 className="text-base sm:text-lg lg:text-2xl py-4 font-spartan text-yellow-500 text-left mt-4">
-              Additional Features
-            </h4>
-            <div className="flex flex-wrap gap-4 mt-2">
-              {["GPS Location", "Grease Intake", "Damage Protection"].map(
-                (feature, index) => (
-                  <button
-                    key={index}
-                    className="text-xs sm:text-sm text-white border-white px-4 py-2 hover:bg-yellow-300 hover:rounded hover:text-gray-700 transition-colors duration-300"
-                  >
-                    {feature}
-                  </button>
-                )
-              )}
-            </div>
           </div>
         </div>
-      </div>
-
-      {/* Similar section */}
-      <div className="container pt-5">
-        <h3 className="min-[320px]:text-2xl font-semibold font-spartan mb-4">
-          Similar
-        </h3>
-        <Slider {...settings}>
-          {[1, 2, 3, 4].map((i) => (
-            <div
-              key={i}
-              className="bg-white border rounded-lg shadow-md h-64 px-2"
-            >
-              {" "}
-              {/* Added px-2 for horizontal padding */}
-              <div className="p-4 space-y-2 h-48">
-                <img
-                  src="/buldozer.png?height=150&width=200"
-                  alt={`Similar Excavator ${i}`}
-                  className="w-full h-40 object-cover rounded-lg"
-                />
-                <h4 className="font-semibold">₹ 2500/hr</h4>
-                <p className="text-xs sm:text-sm text-gray-600">
-                  Heavy-duty excavator for your construction needs.
-                </p>
-              </div>
-            </div>
-          ))}
-        </Slider>
       </div>
 
       {/* Reviews section */}

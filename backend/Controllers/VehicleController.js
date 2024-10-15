@@ -94,4 +94,21 @@ const getVehicles = async (req, res) => {
   }
 };
 
-module.exports = { createVehicle, getVehicles };
+// Controller to handle renting a vehicle
+const rentVehicle = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const vehicle = await Vehicle.findByIdAndUpdate(
+      id,
+      { isAvailable: false },
+      { new: true }
+    );
+    res.status(200).json({ message: "Vehicle rented successfully", vehicle });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error renting vehicle", error: error.message });
+  }
+};
+
+module.exports = { createVehicle, getVehicles, rentVehicle };
