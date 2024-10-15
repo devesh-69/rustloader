@@ -50,7 +50,8 @@ export default function ConstructionRental() {
     const fetchVehicles = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8080/api/vehicles/listings"
+          //"http://localhost:8080/api/vehicles/listings"
+          "https://rustloader.vercel.app/api/vehicles/listings"
         );
         if (!response.ok) {
           throw new Error("Failed to fetch vehicles");
@@ -329,7 +330,8 @@ export default function ConstructionRental() {
                 <CardContent>
                   <div className="relative w-full pb-[56.25%]">
                     {/* Check if vehicleImages exists and has at least one image */}
-                    {vehicle.vehicleImages && vehicle.vehicleImages.length > 0 ? (
+                    {vehicle.vehicleImages &&
+                    vehicle.vehicleImages.length > 0 ? (
                       <img
                         src={`data:${vehicle.vehicleImages[0].contentType};base64,${vehicle.vehicleImages[0].data}`}
                         alt={vehicle.VehicleName}
