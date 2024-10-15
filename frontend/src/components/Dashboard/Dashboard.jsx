@@ -33,9 +33,9 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (!token) {
-      navigate('/login');
+      navigate("/login");
     }
 
     const fetchEarnings = async () => {
@@ -215,19 +215,20 @@ const Dashboard = () => {
               <span className="ml-2 hidden md:inline">Overview</span>
             </a>
             <a
-              href="#rental-mana"
-              className="flex items-center p-4 text-gray-800 border-b border-gray-200"
-            >
-              <FaCalendarAlt size={20} />
-              <span className="ml-2 hidden md:inline">Rental Management</span>
-            </a>
-            <a
               href="#list-vehicle"
               className="flex items-center p-4 text-gray-800 border-b border-gray-200"
             >
               <FaCar size={20} />
               <span className="ml-2 hidden md:inline">List Vehicle</span>
             </a>
+            <a
+              href="#rental-mana"
+              className="flex items-center p-4 text-gray-800 border-b border-gray-200"
+            >
+              <FaCalendarAlt size={20} />
+              <span className="ml-2 hidden md:inline">Rental Management</span>
+            </a>
+
             <a
               href="#vehicle-mana"
               className="flex items-center p-4 text-gray-800 border-b border-gray-200"
@@ -310,8 +311,13 @@ const Dashboard = () => {
             </div>
           </div>
 
+          {/* List Vehicle */}
+          <div id="list-vehicle">
+            <VehicleListingForm />
+          </div>
+
           {/* Rental Management */}
-          <div className="mb-8">
+          <div className="my-6">
             <h2 id="rental-mana" className="text-xl font-bold mb-4">
               Rental Management
             </h2>
@@ -330,11 +336,6 @@ const Dashboard = () => {
                 </div>
               ))}
             </div>
-          </div>
-
-          {/* List Vehicle */}
-          <div id="list-vehicle">
-            <VehicleListingForm />
           </div>
 
           {/* Vehicle Management */}
