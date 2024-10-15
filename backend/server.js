@@ -1,5 +1,4 @@
 const express = require("express");
-const bodyParser = require("body-parser");
 const cors = require("cors");
 const AuthRouter = require("./routes/AuthRouter");
 const VehicleRouter = require("./routes/VehicleRouter");
@@ -21,6 +20,12 @@ app.use("/owner", OwnerRouter);
 
 app.get("/", (req, res) => {
   res.send("Welcome to the RustLoader!");
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send("Something broke!");
 });
 
 app.listen(PORT, () => {

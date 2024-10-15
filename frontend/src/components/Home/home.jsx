@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
@@ -49,11 +49,11 @@ const Home = () => {
   const vehicles = [
     {
       imageSrc:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNZ27VB0dBnFtW-3CxY68woCma8JpQY2axCg&s",
-      altText: "FlatBed Truck",
-      title: "FlatBed Truck",
+        "https://media.istockphoto.com/id/695789348/photo/excavator-blue-sky-heavy-machine-construction-site.jpg?s=612x612&w=0&k=20&c=rfEUzRNSMuUWhQro6HV7W7J6URrRWyzZHGDtuYCcbVc=",
+      altText: "Excavator",
+      title: "Excavator",
       category: "Quick Pick-up",
-      linkTo: "/vehicles",
+      linkTo: "/vehicles?category=excavator",
     },
     {
       imageSrc:
@@ -61,23 +61,23 @@ const Home = () => {
       altText: "Dump Truck",
       title: "Dump Truck",
       category: "Quick Pick-up",
-      linkTo: "/vehicles",
+      linkTo: "/vehicles?category=dumptruck",
     },
     {
       imageSrc:
         "https://media.istockphoto.com/id/104501743/photo/mobile-crane-with-its-boom-risen-outdoors.jpg?s=612x612&w=0&k=20&c=0u1Ij6McPQ4xAIhSpniZegok_2vIP6ZQKE_TE0N4r5Y=",
-      altText: "Crane Truck",
-      title: "Crane Truck",
+      altText: "Crane",
+      title: "Crane",
       category: "Quick Pick-up",
-      linkTo: "/vehicles",
+      linkTo: "/vehicles?category=crane",
     },
     {
       imageSrc:
         "https://media.istockphoto.com/id/695789348/photo/excavator-blue-sky-heavy-machine-construction-site.jpg?s=612x612&w=0&k=20&c=rfEUzRNSMuUWhQro6HV7W7J6URrRWyzZHGDtuYCcbVc=",
-      altText: "Excavator",
-      title: "Excavator",
+      altText: "roller",
+      title: "Roller",
       category: "Quick Pick-up",
-      linkTo: "/vehicles",
+      linkTo: "/vehicles?category=excavator",
     },
     {
       imageSrc:
@@ -85,7 +85,7 @@ const Home = () => {
       altText: "Bulldozer",
       title: "Bulldozer",
       category: "Heavy Machinery",
-      linkTo: "/vehicles",
+      linkTo: "/vehicles?category=bulldozer",
     },
     {
       imageSrc:
@@ -173,7 +173,9 @@ const Home = () => {
             setLocation(address);
           } catch (error) {
             console.error("Error fetching address:", error);
-            setLocation(`Lat: ${latitude.toFixed(4)}, Lng: ${longitude.toFixed(4)}`);
+            setLocation(
+              `Lat: ${latitude.toFixed(4)}, Lng: ${longitude.toFixed(4)}`
+            );
           }
         },
         () => {

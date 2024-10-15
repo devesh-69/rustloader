@@ -21,8 +21,13 @@ import {
 } from "@/components/ui/select";
 import { ThreeDots } from "react-loader-spinner";
 import Fuse from "fuse.js";
+import { useLocation } from "react-router-dom";
 
 export default function ConstructionRental() {
+  const location = useLocation();
+  const query = new URLSearchParams(location.search);
+  const category = query.get("category");
+
   const [isOpen, setIsOpen] = useState(false);
   const [budget, setBudget] = useState([6.7, 100]); // Default budget range for 'All' is full range
   const [searchTerm, setSearchTerm] = useState("");
@@ -50,8 +55,7 @@ export default function ConstructionRental() {
     const fetchVehicles = async () => {
       try {
         const response = await fetch(
-          //"http://localhost:8080/api/vehicles/listings"
-          "https://rustloader.vercel.app/api/vehicles/listings"
+          "http://localhost:8080/api/vehicles/listings"
         );
         if (!response.ok) {
           throw new Error("Failed to fetch vehicles");
@@ -127,6 +131,11 @@ export default function ConstructionRental() {
       }
       return 0; // No sorting
     });
+
+  // Filter vehicles based on the selected category
+  const categoryFilteredVehicles = category
+    ? filteredVehicles.filter(vehicle => vehicle.vehicleType.toLowerCase() === category.toLowerCase())
+    : filteredVehicles; // Show all vehicles if no category is selected
 
   return (
     <div className="container mx-auto p-4 w-full scale-100 sm:scale-90">
@@ -322,7 +331,7 @@ export default function ConstructionRental() {
 
           {/* Vehicle cards */}
           <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
-            {filteredVehicles.map((vehicle) => (
+            {categoryFilteredVehicles.map((vehicle) => (
               <Card key={vehicle._id} className="overflow-hidden">
                 <CardHeader>
                   <CardTitle>{vehicle.VehicleName}</CardTitle>
