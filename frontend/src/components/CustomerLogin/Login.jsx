@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import eye icons
 
 const Login = () => {
   const [LoginInfo, setLoginInfo] = useState({
@@ -75,12 +76,14 @@ const Login = () => {
   };
 
   return (
-    <div className="container">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <form
         onSubmit={handleLoginSubmit}
-        className="max-w-lg mx-auto p-8 shadow-lg rounded-lg bg-white"
+        className="max-w-md w-full p-8 shadow-lg rounded-lg bg-white"
       >
-        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+        <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
+          Login
+        </h2>
 
         {/* Email */}
         <div className="mb-4">
@@ -96,7 +99,7 @@ const Login = () => {
             name="email"
             value={LoginInfo.email}
             onChange={handleChange}
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            className="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-300"
             required
           />
         </div>
@@ -116,32 +119,33 @@ const Login = () => {
               name="password"
               value={LoginInfo.password}
               onChange={handleChange}
-              className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+              className="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-300"
               required
             />
             <button
               type="button"
               onClick={togglePasswordVisibility}
-              className="absolute right-2 top-2"
+              className="absolute right-4 top-4 text-gray-500"
             >
-              {showPassword ? "Hide" : "Show"}
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
             </button>
           </div>
         </div>
 
         {/* Submit Button */}
-        <span>
+        <button
+          type="submit"
+          className="w-full py-2 px-4 bg-yellow-300 text-gray-800 rounded-md hover:bg-yellow-400 transition duration-300"
+        >
+          Login
+        </button>
+
+        <span className="block text-center mt-4">
           {" Don't Have an Account yet? "}
           <Link to="/signup" className="text-blue-600 underline">
             Register here
           </Link>
         </span>
-        <button
-          type="submit"
-          className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-500"
-        >
-          Login
-        </button>
       </form>
 
       <ToastContainer />

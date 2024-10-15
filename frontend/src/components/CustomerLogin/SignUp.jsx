@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import eye icons
 
 const SignUp = () => {
-  const [signUpInfo, setsignUpInfo] = useState({
+  const [signUpInfo, setSignUpInfo] = useState({
     name: "",
     email: "",
     password: "",
@@ -24,11 +25,11 @@ const SignUp = () => {
 
     if (name === "mobileNumber") {
       const numericValue = value.replace(/[^0-9]/g, ""); // Filter out non-numeric characters
-      setsignUpInfo({ ...signUpInfo, [name]: numericValue });
+      setSignUpInfo({ ...signUpInfo, [name]: numericValue });
     } else if (files) {
-      setsignUpInfo({ ...signUpInfo, [name]: files[0] });
+      setSignUpInfo({ ...signUpInfo, [name]: files[0] });
     } else {
-      setsignUpInfo({ ...signUpInfo, [name]: value });
+      setSignUpInfo({ ...signUpInfo, [name]: value });
     }
   };
 
@@ -93,12 +94,14 @@ const SignUp = () => {
   };
 
   return (
-    <div className="container">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <form
         onSubmit={handleSignUpSubmit}
-        className="max-w-lg mx-auto p-8 shadow-lg rounded-lg bg-white"
+        className="max-w-lg w-full p-8 shadow-lg rounded-lg bg-white"
       >
-        <h2 className="text-2xl font-bold mb-6 text-center">Signup</h2>
+        <h2 className="text-3xl font-bold py-12 text-center text-gray-800">
+          Create an Account
+        </h2>
 
         {/* Name */}
         <div className="mb-4">
@@ -114,7 +117,7 @@ const SignUp = () => {
             name="name"
             value={signUpInfo.name}
             onChange={handleChange}
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            className="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-300"
             required
           />
         </div>
@@ -133,7 +136,7 @@ const SignUp = () => {
             name="email"
             value={signUpInfo.email}
             onChange={handleChange}
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            className="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-300"
             required
           />
         </div>
@@ -154,15 +157,15 @@ const SignUp = () => {
             maxLength={16}
             value={signUpInfo.password}
             onChange={handleChange}
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            className="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-300"
             required
           />
           <button
             type="button"
             onClick={togglePasswordVisibility}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2"
+            className="absolute right-4 top-10 text-gray-500"
           >
-            {showPassword ? "Hide" : "Show"}
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
           </button>
         </div>
 
@@ -181,7 +184,7 @@ const SignUp = () => {
             value={signUpInfo.mobileNumber}
             onChange={handleChange}
             maxLength={10}
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            className="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-300"
             required
           />
         </div>
@@ -200,7 +203,7 @@ const SignUp = () => {
             name="address"
             value={signUpInfo.address}
             onChange={handleChange}
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            className="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-300"
             required
           />
         </div>
@@ -220,7 +223,7 @@ const SignUp = () => {
             value={signUpInfo.aadhaarNumber}
             onChange={handleChange}
             maxLength={12}
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            className="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-300"
             required
           />
         </div>
@@ -240,7 +243,7 @@ const SignUp = () => {
             value={signUpInfo.panCardNumber}
             onChange={handleChange}
             maxLength={10}
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            className="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-300"
             required
           />
         </div>
@@ -260,7 +263,7 @@ const SignUp = () => {
             accept="image/*"
             onChange={handleChange}
             required
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            className="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-300"
           />
         </div>
 
@@ -279,7 +282,7 @@ const SignUp = () => {
             accept="image/*"
             onChange={handleChange}
             required
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            className="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-300"
           />
         </div>
 
@@ -298,19 +301,19 @@ const SignUp = () => {
             accept="image/*"
             onChange={handleChange}
             required
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            className="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-300"
           />
         </div>
 
         <span>
-          {" Already Have a Account yet? "}
+          {" Already Have an Account? "}
           <Link to="/login" className="text-blue-600 underline">
             Login here
           </Link>
         </span>
         <button
           type="submit"
-          className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-500"
+          className="w-full py-2 mt-4 px-4 bg-yellow-300 text-gray-800 rounded-md hover:bg-yellow-400 transition duration-300"
         >
           Register
         </button>
