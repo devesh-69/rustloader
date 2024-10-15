@@ -1,8 +1,8 @@
 const express = require("express");
 const cors = require("cors");
-const AuthRouter = require("./routes/AuthRouter");
-const VehicleRouter = require("./routes/VehicleRouter");
-const OwnerRouter = require("./routes/ownerRoutes");
+const AuthRouter = require("./Routes/AuthRouter");
+const VehicleRouter = require("./Routes/VehicleRouter");
+const OwnerRouter = require("./Routes/ownerRoutes");
 
 require("dotenv").config();
 require("./models/database");
