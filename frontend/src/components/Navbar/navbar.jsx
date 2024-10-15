@@ -39,8 +39,13 @@ const NavBar = () => {
 
   const handleListVehicle = useCallback(() => {
     console.log("handleListVehicle called"); // Debug log
-    navigate("/dashboard");
-    console.log("Navigation attempted"); // Debug log
+    const token = localStorage.getItem("token"); // Check if user is logged in
+
+    if (token) {
+      navigate("/dashboard"); // Redirect to dashboard if logged in
+    } else {
+      navigate("/owners"); // Redirect to owners page if logged out
+    }
   }, [navigate]);
 
   useEffect(() => {
