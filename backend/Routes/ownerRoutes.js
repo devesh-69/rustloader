@@ -1,10 +1,10 @@
 const express = require("express");
-const { registerOwner, loginOwner } = require("../controllers/ownerController");
+const { registerOwner, loginOwner } = require("../Controllers/ownerController");
 const {
   validateOwnerRegistration,
   validateOwnerLogin,
 } = require("../middlewares/ownerValidation");
-const OwnerDocumentsMiddleware = require("../middlewares/OwnerDocumentsMiddleware");
+const OwnerDocumentsMiddleware = require("../Middlewares/OwnerDocumentsMiddleware");
 
 const router = express.Router();
 

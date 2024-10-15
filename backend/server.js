@@ -11,7 +11,14 @@ const PORT = process.env.PORT || 8080;
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true, // Allow credentials (if needed)
+    optionsSuccessStatus: 204, // For legacy browser support
+  })
+);
 
 // Add routes
 app.use("/auth", AuthRouter);
