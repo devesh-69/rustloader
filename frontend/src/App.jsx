@@ -54,6 +54,7 @@ function App() {
           <Route element={<PrivateRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/checkout" element={<CheckOutPage />} />
+            <Route path="/checkout/:id" element={<CheckOutPage />} />
           </Route>
         </Routes>
       </Layout>
