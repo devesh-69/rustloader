@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const Vehicle = require("../Models/vehicle");
+const Vehicle = require("./vehicle");
 
 const VehicleSchema = new mongoose.Schema({
   vehicleType: { type: String, required: true },

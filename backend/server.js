@@ -16,7 +16,7 @@ app.use(
     origin: "*",
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true, // Allow credentials (if needed)
-    optionsSuccessStatus: 204, // For legacy browser support
+    optionsSuccessStatus: 204,
   })
 );
 

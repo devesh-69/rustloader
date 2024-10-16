@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Vehicle = require("../Models/vehicle");
 
+// Create vehicle
 const createVehicle = async (req, res) => {
   try {
     // Check for multer errors (file size or format issues)
@@ -94,7 +95,41 @@ const getVehicles = async (req, res) => {
   }
 };
 
-// Controller to handle renting a vehicle
+// Get a vehicle by ID
+const getVehicleById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Check if the ID is valid
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid vehicle ID." });
+    }
+
+    const vehicle = await Vehicle.findById(id);
+
+    if (!vehicle) {
+      return res.status(404).json({ message: "Vehicle not found." });
+    }
+
+    // Convert buffer data to base64 strings for the vehicle images
+    const vehicleWithBase64Images = {
+      ...vehicle.toObject(),
+      vehicleImages: vehicle.vehicleImages.map((image) => ({
+        contentType: image.contentType,
+        data: image.data.toString("base64"),
+      })),
+    };
+
+    res.status(200).json(vehicleWithBase64Images);
+  } catch (error) {
+    console.error("Error fetching vehicle:", error);
+    res
+      .status(500)
+      .json({ message: "Error fetching vehicle", error: error.message });
+  }
+};
+
+// Rent a vehicle
 const rentVehicle = async (req, res) => {
   try {
     const { id } = req.params;
@@ -111,4 +146,4 @@ const rentVehicle = async (req, res) => {
   }
 };
 
-module.exports = { createVehicle, getVehicles, rentVehicle };
+module.exports = { createVehicle, getVehicles, getVehicleById, rentVehicle };
