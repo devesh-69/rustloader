@@ -29,6 +29,7 @@ const CheckOut = () => {
   const [vehicle, setVehicle] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [similarVehicles, setSimilarVehicles] = useState([]); // State for similar vehicles
   const [userReview, setUserReview] = useState({ rating: 0, comment: "" });
   const [isReviewing, setIsReviewing] = useState(false);
 
@@ -65,10 +66,29 @@ const CheckOut = () => {
         setLoading(false);
       }
     };
-    fetchVehicles();
-  }, [id]); // Dependency array includes id to refetch if it changes
 
-  if (loading) return <LoadingScreen />; // Ensure this line is reached when loading is true
+    const fetchSimilarVehicles = async () => {
+      try {
+        const response = await fetch(
+          `https://rustloader-backend.vercel.app/api/vehicles/listings` // Adjust the endpoint accordingly
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch similar vehicles");
+        }
+        const data = await response.json();
+        console.log("Fetched similar vehicles:", data);
+        setSimilarVehicles(data); // Set the fetched similar vehicles to state
+      } catch (err) {
+        console.error(err);
+        setError("Error fetching similar vehicles");
+      }
+    };
+
+    fetchVehicles();
+    fetchSimilarVehicles(); // Fetch similar vehicles
+  }, [id]);
+
+  if (loading) return <LoadingScreen />;
   if (error) return <div>Error: {error}</div>;
   if (!vehicle || Object.keys(vehicle).length === 0)
     return <div>No vehicle found.</div>;
@@ -167,164 +187,186 @@ const CheckOut = () => {
               </div>
               <div>
                 <p className="font-semibold">Duration</p>
-                <p>
-                  {vehicle.duration ? `${vehicle.duration} Days` : "N/A"}
-                </p>{" "}
+                <p>{vehicle.duration ? `${vehicle.duration} Days` : "N/A"}</p>
               </div>
             </div>
           </div>
 
           {/* Specifications section */}
-          <div className="bg-gray-900 text-white border rounded-lg p-6 sm:p-8 h-3/5 animate-fadeIn">
+          <div className="bg-gray-900 text-white border rounded-lg p-6 sm:p-8 h-auto animate-fadeIn">
             <h3 className="text-lg sm:text-xl lg:text-2xl pb-8 font-spartan text-yellow-500 text-left">
               Specifications
             </h3>
-            <div className="grid grid-cols-1 min-[320px]:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 px-6">
               <div>
                 <p className="font-semibold flex items-center">
                   <i className="fas fa-cog mr-2"></i> Vehicle Year
                 </p>
-                <p>{vehicle.vehicleYear ? vehicle.vehicleYear : "N/A"}</p>
+                <p className="px-2 hover:font-bold">
+                  {vehicle.vehicleYear ? vehicle.vehicleYear : "N/A"}
+                </p>
               </div>
               <div>
                 <p className="font-semibold flex items-center">
                   <i className="fas fa-exchange-alt mr-2"></i> Weight Capacity
                 </p>
-                <p>{vehicle.weightCapacity ? vehicle.weightCapacity : "N/A"}</p>
+                <p className="px-2 hover:font-bold">
+                  {vehicle.weightCapacity ? vehicle.weightCapacity : "N/A"}
+                </p>
               </div>
               <div>
                 <p className="font-semibold flex items-center">
                   <i className="fas fa-bolt mr-2"></i> Fuel
                 </p>
-                <p>{vehicle.fuelType ? vehicle.fuelType : "N/A"}</p>
+                <p className="px-2 hover:font-bold">
+                  {vehicle.fuelType ? vehicle.fuelType : "N/A"}
+                </p>
               </div>
               <div>
                 <p className="font-semibold flex items-center">
                   <i className="fas fa-tachometer-alt mr-2"></i> Use
                 </p>
-                <p>{vehicle.vehicleUse ? vehicle.vehicleUse : "N/A"}</p>
+                <p className="px-2 hover:font-bold">
+                  {vehicle.vehicleUse ? vehicle.vehicleUse : "N/A"}
+                </p>
               </div>
             </div>
             <h4 className="text-base sm:text-lg lg:text-2xl py-4 font-spartan text-yellow-500 text-left mt-4">
               Additional Features
             </h4>
             <div className="flex flex-wrap gap-4 mt-2">
-              {["GPS Location", "Grease Intake", "Damage Protection"].map(
-                (feature, index) => (
-                  <button
-                    key={index}
-                    className="text-xs sm:text-sm text-white border-white px-4 py-2 hover:bg-yellow-300 hover:rounded hover:text-gray-700 transition-colors duration-300"
-                  >
-                    {feature}
-                  </button>
-                )
-              )}
+              {[
+                {
+                  name: "GPS Location",
+                  info: "Real-time tracking of the vehicle's location.",
+                },
+                {
+                  name: "Grease Intake",
+                  info: "Automated grease intake for maintenance.",
+                },
+                {
+                  name: "Damage Protection",
+                  info: "Insurance coverage for accidental damages from owner.",
+                },
+              ].map((feature, index) => (
+                <div
+                  key={index}
+                  className="text-xs sm:text-sm text-white border-white px-4 py-2 relative w-full sm:w-auto hover:shadow-lg transition-shadow duration-300 ease-in-out"
+                  onMouseEnter={(e) => {
+                    const popup = e.currentTarget.querySelector(".popup");
+                    if (popup) popup.classList.remove("hidden");
+                  }}
+                  onMouseLeave={(e) => {
+                    const popup = e.currentTarget.querySelector(".popup");
+                    if (popup) popup.classList.add("hidden");
+                  }}
+                >
+                  <button className="w-full">{feature.name}</button>
+                  <div className="absolute bottom-0 left-0 w-full bg-yellow-300 p-2 text-gray-700 hidden popup transition-opacity duration-300 opacity-100 animate-fadeIn">
+                    <p>{feature.info}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Similar section */}
-      <div className="container pt-5">
-        <h3 className="min-[320px]:text-2xl font-semibold font-spartan mb-4">
-          Similar
+      {/* Similar vehicles slider */}
+      <div className="bg-white border rounded-lg flex flex-col animate-fadeIn">
+        <h3 className="text-lg sm:text-xl lg:text-2xl p-6 font-semibold font-spartan text-start">
+          Similar Vehicles
         </h3>
         <Slider {...settings}>
-          {[1, 2, 3, 4].map((i) => (
-            <div
-              key={i}
-              className="bg-white border rounded-lg shadow-md h-64 px-2"
-            >
-              {" "}
-              {/* Added px-2 for horizontal padding */}
-              <div className="p-4 space-y-2 h-48">
-                <img
-                  src="/buldozer.png?height=150&width=200"
-                  alt={`Similar Excavator ${i}`}
-                  className="w-full h-40 object-cover rounded-lg"
-                />
-                <h4 className="font-semibold">₹ 2500/hr</h4>
-                <p className="text-xs sm:text-sm text-gray-600">
-                  Heavy-duty excavator for your construction needs.
+          {similarVehicles.map((similar) => (
+            <div key={similar._id} className="p-4 px-16">
+              <img
+                src={`data:${similar.vehicleImages[0].contentType};base64,${similar.vehicleImages[0].data}`}
+                alt={similar.VehicleName}
+                className="object-contain rounded-lg w-full h-40 my-2"
+              />
+              <h4 className="text-lg font-semibold text-start">
+                {similar.vehicleType}
+                <p className="text-sm">
+                  {similar.price
+                    ? ` ${similar.vehicleUse}`
+                    : "Vehicles Not available"}
                 </p>
-              </div>
+              </h4>
             </div>
           ))}
         </Slider>
       </div>
 
       {/* Reviews section */}
-      <div>
-        <h3 className="text-xl sm:text-3xl font-bold font-spartan mb-4">
+      <div className="bg-white rounded-lg flex flex-col animate-fadeIn">
+        <h3 className="text-lg sm:text-xl lg:text-2xl p-6 font-semibold font-spartan">
           Reviews
         </h3>
-        {reviews.length > 0 ? ( // Check if there are reviews
-          reviews.map((review) => (
-            <div
-              key={review.id}
-              className="bg-white border rounded-lg p-4 mb-4 overflow-auto"
-            >
-              <div className="flex items-center mb-2">
-                <div className="flex items-center text-yellow-500">
-                  {[...Array(5)].map((_, i) => (
+        <div className="divide-y divide-gray-300">
+          {reviews.map((review) => (
+            <div key={review.id} className="p-4">
+              <div className="flex justify-between">
+                <div className="flex flex-col">
+                  <h4 className="font-semibold">{review.author}</h4>
+                  <p className="text-sm text-gray-600">
+                    {new Date(review.date).toLocaleDateString()}
+                  </p>
+                </div>
+                <div className="flex items-center">
+                  {[...Array(5)].map((_, index) => (
                     <StarIcon
-                      key={i}
-                      className={`w-5 h-5 ${
-                        i < review.rating ? "text-yellow-400" : "text-gray-400"
+                      key={index}
+                      className={`w-4 h-4 ${
+                        index < review.rating
+                          ? "text-yellow-500"
+                          : "text-gray-300"
                       }`}
                     />
                   ))}
                 </div>
-                <span className="ml-2 text-sm text-gray-600">
-                  {review.author}
-                </span>
-                <span className="ml-2 text-xs text-gray-400">
-                  {review.date}
-                </span>
               </div>
-              <p>{review.comment}</p>
+              <p className="mt-2">{review.comment}</p>
             </div>
-          ))
-        ) : (
-          <div className="text-gray-600">No reviews available.</div> // Message when no reviews
-        )}
-        {!isReviewing && (
+          ))}
+        </div>
+        <div className="p-4 border-t">
           <button
             onClick={() => setIsReviewing(true)}
-            className="w-full bg-yellow-300 hover:bg-yellow-400 text-black py-2 rounded"
+            className="bg-yellow-300 hover:bg-yellow-500 py-2 px-4 rounded"
           >
-            Write a Review
+            Leave a Review
           </button>
-        )}
-        {isReviewing && (
-          <div className="bg-white border rounded-lg shadow-md p-4 mt-4">
-            <h4 className="text-lg font-semibold mb-2">Write Your Review</h4>
-            <div className="flex items-center mb-2">
-              {[...Array(5)].map((_, i) => (
-                <StarIcon
-                  key={i}
-                  className={`w-6 h-6 ${
-                    i < userReview.rating ? "text-yellow-400" : "text-gray-400"
-                  }`}
-                  onClick={() => handleStarClick(i + 1)}
-                />
-              ))}
+          {isReviewing && (
+            <div className="mt-4">
+              <div className="flex">
+                {[...Array(5)].map((_, index) => (
+                  <StarIcon
+                    key={index}
+                    onClick={() => handleStarClick(index + 1)}
+                    className={`w-6 h-6 cursor-pointer ${
+                      index < userReview.rating
+                        ? "text-yellow-500"
+                        : "text-gray-300"
+                    }`}
+                  />
+                ))}
+              </div>
+              <textarea
+                value={userReview.comment}
+                onChange={handleCommentChange}
+                placeholder="Your review"
+                className="w-full p-2 border rounded mt-2"
+              />
+              <button
+                onClick={handleSubmitReview}
+                className="mt-2 bg-yellow-300 hover:bg-yellow-500 py-2 px-4 rounded"
+              >
+                Submit Review
+              </button>
             </div>
-            <textarea
-              className="w-full border rounded-md p-2"
-              rows="4"
-              placeholder="Your review..."
-              value={userReview.comment}
-              onChange={handleCommentChange}
-            />
-            <button
-              onClick={handleSubmitReview}
-              className="w-full bg-yellow-300 hover:bg-yellow-400 text-black py-2 rounded mt-2"
-            >
-              Submit Review
-            </button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
