@@ -309,7 +309,9 @@ export default function ConstructionRental() {
         <div className="w-full md:w-3/4 space-y-6">
           {/* Sorting dropdown */}
           <div className="flex justify-between items-center">
-            <h1 className="text-xl font-bold">Vehicles</h1>
+            <h1 className="text-xl font-bold">
+              Vehicles ({categoryFilteredVehicles.length})
+            </h1>
             <div className="space-y-2 w-44">
               <Label>Sort by</Label>
               <Select
@@ -332,46 +334,51 @@ export default function ConstructionRental() {
           </div>
 
           {/* Vehicle cards */}
-          <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {categoryFilteredVehicles.map((vehicle) => (
-              <Card key={vehicle._id} className="overflow-hidden">
-                <CardHeader>
-                  <CardTitle>{vehicle.VehicleName}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="relative w-full pb-[56.25%]">
-                    {/* Check if vehicleImages exists and has at least one image */}
+              <Card
+                key={vehicle._id}
+                className="overflow-hidden hover:shadow-xl transition-shadow duration-300"
+              >
+                <CardHeader className="p-0">
+                  <div className="relative pb-[56.25%]">
                     {vehicle.vehicleImages &&
                     vehicle.vehicleImages.length > 0 ? (
                       <img
                         src={`data:${vehicle.vehicleImages[0].contentType};base64,${vehicle.vehicleImages[0].data}`}
                         alt={vehicle.VehicleName}
-                        className="absolute top-0 left-0 h-full w-full object-fill"
+                        className="absolute top-0 left-0 h-full w-full object-cover"
                       />
                     ) : (
                       <div className="absolute top-0 left-0 h-full w-full flex items-center justify-center bg-gray-200">
-                        <span>No Image Available</span>
+                        <FaTruck className="text-4xl text-gray-400" />
                       </div>
                     )}
                   </div>
-                  <div className="mt-2 flex items-center space-x-2 text-sm text-muted-foreground">
-                    <FaClock /> <span>Rental available</span>
-                  </div>
-                  <div className="mt-2 flex items-center space-x-2 text-sm text-muted-foreground">
-                    <FaClock /> <span>{vehicle.duration} Day</span>
-                  </div>
-                  {/* Show only price in ₹ */}
-                  <div className="mt-1 flex items-center space-x-2 text-sm text-muted-foreground">
-                    <FaTags /> <span>₹ {vehicle.price}</span>
+                </CardHeader>
+                <CardContent className="p-4">
+                  <CardTitle className="text-xl mb-2">
+                    {vehicle.VehicleName}
+                  </CardTitle>
+                  <div className="space-y-2 text-sm text-gray-600">
+                    <div className="flex items-center">
+                      <FaClock className="mr-2" /> <span>Rental available</span>
+                    </div>
+                    <div className="flex items-center">
+                      <FaClock className="mr-2" />{" "}
+                      <span>{vehicle.duration} Day</span>
+                    </div>
+                    <div className="flex items-center font-semibold text-lg text-yellow-700">
+                      <FaTags className="mr-2" /> <span>₹ {vehicle.price}</span>
+                    </div>
                   </div>
                 </CardContent>
-                <CardFooter className="pt-0">
+                <CardFooter className="p-4 pt-0">
                   <Button
-                    variant="link"
-                    className="p-0 text-yellow-500 hover:text-yellow-600"
-                    onClick={() => navigate(`/checkout/${vehicle._id}`)} // Navigate to checkout page with vehicle _id
+                    className="w-full bg-transparent border border-yellow-300 text-gray-700 hover:bg-yellow-300"
+                    onClick={() => navigate(`/checkout/${vehicle._id}`)}
                   >
-                    Rent now →
+                    Rent now
                   </Button>
                 </CardFooter>
               </Card>
