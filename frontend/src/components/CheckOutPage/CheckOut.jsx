@@ -146,7 +146,7 @@ const CheckOut = () => {
               {vehicle.VehicleName}
             </h2>
             <p className="text-sm sm:text-base text-gray-600">
-              {vehicle.vehicleType} for construction projects
+              {vehicle.vehicleUse}
             </p>
             <div className="flex justify-center mt-4 lg:mt-8">
               <button className="bg-yellow-300 hover:bg-yellow-500 py-3 px-4 w-full rounded text-gray-800 font-semibold text-lg">
