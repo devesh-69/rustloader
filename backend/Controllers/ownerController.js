@@ -1,5 +1,5 @@
 const bcrypt = require("bcryptjs");
-const OwnerModel = require("../Models/owner");
+const OwnerModel = require("../Models/Owner");
 const jwt = require("jsonwebtoken");
 
 exports.registerOwner = async (req, res) => {
