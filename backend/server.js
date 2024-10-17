@@ -5,7 +5,7 @@ const VehicleRouter = require("./Routes/VehicleRouter");
 const OwnerRouter = require("./Routes/ownerRoutes");
 
 require("dotenv").config();
-require("./models/database");
+require("./Models/database");
 
 const PORT = process.env.PORT || 8080;
 const app = express();
