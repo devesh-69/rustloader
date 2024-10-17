@@ -53,10 +53,10 @@
   },
   "private": true,
   "scripts": {
-    "start": "vite --host",
-    "dev": "concurrently \"npm start\" \"cd ../backend && npm start\"",
     "build": "vite build",
-    "lint": "eslint .",
+    "start": "vite",
+    "dev": "concurrently \"npm start\" \"cd ../backend && npm start\"",
+    "lint": "eslint",
     "preview": "vite preview"
   },
   "type": "module"
