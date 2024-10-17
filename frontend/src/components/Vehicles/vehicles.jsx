@@ -56,7 +56,7 @@ export default function ConstructionRental() {
     const fetchVehicles = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8080/api/vehicles/listings"
+          "https://rustloader-backend.vercel.app/api/vehicles/listings"
         );
         if (!response.ok) {
           throw new Error("Failed to fetch vehicles");

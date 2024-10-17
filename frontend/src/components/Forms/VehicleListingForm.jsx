@@ -85,7 +85,7 @@ const VehicleListingForm = () => {
     formData.append("duration", vehicleDetails.duration);
 
     try {
-      const response = await fetch("http://localhost:8080/api/vehicles/list", {
+      const response = await fetch("https://rustloader-backend.vercel.app/api/vehicles/list", {
         method: "POST",
         body: formData,
       });

@@ -27,7 +27,7 @@ const Login = () => {
       }
 
       try {
-        const url = "http://localhost:8080/auth/login";
+        const url = "https://rustloader-backend.vercel.app/auth/login";
         // const url = "https://rustloader-back.vercel.app/login";
 
         // Prepare the payload

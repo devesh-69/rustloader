@@ -88,7 +88,7 @@ const OwnerPage = () => {
       }
 
       try {
-        const response = await fetch("http://localhost:8080/owner/register", {
+        const response = await fetch("https://rustloader-backend.vercel.app/owner/register", {
           method: "POST",
           body: formDataToSubmit,
         });
@@ -121,7 +121,7 @@ const OwnerPage = () => {
       console.log("Registration Successful:");
     } else if (activeTab === "login" && validateLogin()) {
       try {
-        const response = await fetch("http://localhost:8080/owner/login", {
+        const response = await fetch("https://rustloader-backend.vercel.app/owner/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

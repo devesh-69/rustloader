@@ -53,7 +53,7 @@ const SignUp = () => {
       }
 
       try {
-        const url = "http://localhost:8080/auth/signup";
+        const url = "https://rustloader-backend.vercel.app/auth/signup";
 
         // Create a FormData object
         const formData = new FormData();
