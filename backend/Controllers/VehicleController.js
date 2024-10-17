@@ -104,6 +104,7 @@ const getVehicleById = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: "Invalid vehicle ID." });
     }
+    console.log(id);
 
     const vehicle = await Vehicle.findById(id);
 

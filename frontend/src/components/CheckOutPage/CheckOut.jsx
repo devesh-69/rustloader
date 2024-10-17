@@ -48,7 +48,7 @@ const CheckOut = () => {
     const fetchVehicles = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8080/api/vehicles/listings?id=${id}` // Use the ID in the fetch request
+          `http://localhost:8080/api/vehicles/listings/${id}` // Use the ID in the fetch request
         );
         if (!response.ok) {
           throw new Error("Failed to fetch vehicle details");
