@@ -32,6 +32,7 @@ const CheckOut = () => {
   const [similarVehicles, setSimilarVehicles] = useState([]); // State for similar vehicles
   const [userReview, setUserReview] = useState({ rating: 0, comment: "" });
   const [isReviewing, setIsReviewing] = useState(false);
+  const [largeImage, setLargeImage] = useState(null);
 
   const handleStarClick = (rating) => {
     setUserReview((prev) => ({ ...prev, rating }));
@@ -88,6 +89,10 @@ const CheckOut = () => {
     fetchSimilarVehicles(); // Fetch similar vehicles
   }, [id]);
 
+  const handleThumbnailClick = (image) => {
+    setLargeImage(image); // Set the clicked thumbnail as the large image
+  };
+
   if (loading) return <LoadingScreen />;
   if (error) return <div>Error: {error}</div>;
   if (!vehicle || Object.keys(vehicle).length === 0)
@@ -127,7 +132,13 @@ const CheckOut = () => {
         <div className="bg-white border rounded-lg shadow-md flex flex-col flex-1">
           <div className="p-4 flex-1 space-y-4">
             <div className="relative flex justify-center">
-              {vehicle.vehicleImages && vehicle.vehicleImages.length > 0 ? (
+              {largeImage ? (
+                <img
+                  src={`data:${largeImage.contentType};base64,${largeImage.data}`}
+                  alt={vehicle.VehicleName}
+                  className="object-contain rounded-lg w-auto h-100"
+                />
+              ) : vehicle.vehicleImages && vehicle.vehicleImages.length > 0 ? (
                 <img
                   src={`data:${vehicle.vehicleImages[0].contentType};base64,${vehicle.vehicleImages[0].data}`}
                   alt={vehicle.VehicleName}
@@ -137,9 +148,21 @@ const CheckOut = () => {
                 <div>No Image Available</div>
               )}
             </div>
-            <div className="flex justify-center space-x-2 overflow-x-auto py-6"></div>
-          </div>
 
+            {/* Small Image Thumbnails */}
+            <div className="flex justify-center space-x-2 overflow-x-auto py-6">
+              {vehicle.vehicleImages.slice(1).map((image, index) => (
+                <div key={index} className="w-24 h-24">
+                  <img
+                    src={`data:${image.contentType};base64,${image.data}`}
+                    alt={`Thumbnail ${index + 1}`}
+                    className="object-cover rounded-lg w-full h-full cursor-pointer"
+                    onClick={() => handleThumbnailClick(image)} // Add onClick handler
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
           {/* Rent now */}
           <div className="p-4">
             <h2 className="text-xl sm:text-2xl font-bold">
@@ -193,7 +216,7 @@ const CheckOut = () => {
           </div>
 
           {/* Specifications section */}
-          <div className="bg-gray-900 text-white border rounded-lg p-6 sm:p-8 h-auto animate-fadeIn">
+          <div className="bg-gray-900 text-white border rounded-lg p-6 sm:p-8 h-[55%] animate-fadeIn">
             <h3 className="text-lg sm:text-xl lg:text-2xl pb-8 font-spartan text-yellow-500 text-left">
               Specifications
             </h3>
@@ -262,7 +285,7 @@ const CheckOut = () => {
                   }}
                 >
                   <button className="w-full">{feature.name}</button>
-                  <div className="absolute bottom-0 left-0 w-full bg-yellow-300 p-2 text-gray-700 hidden popup transition-opacity duration-300 opacity-100 animate-fadeIn">
+                  <div className="absolute top-0 left-0 w-full bg-yellow-300 p-2 text-gray-700 hidden popup transition-opacity duration-300 opacity-100 animate-fadeIn">
                     <p>{feature.info}</p>
                   </div>
                 </div>
