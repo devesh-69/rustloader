@@ -302,17 +302,17 @@ const CheckOut = () => {
         </h3>
         <Slider {...settings}>
           {similarVehicles.map((similar) => (
-            <div key={similar._id} className="p-4 px-16">
+            <div key={similar._id} className="flex flex-col p-4 w-full">
               <img
                 src={`data:${similar.vehicleImages[0].contentType};base64,${similar.vehicleImages[0].data}`}
                 alt={similar.VehicleName}
-                className="object-contain rounded-lg w-full h-40 my-2"
+                className="object-cover rounded-lg h-40 w-full"
               />
-              <h4 className="text-lg font-semibold text-start">
-                {similar.vehicleType}
+              <h4 className="text-lg font-semibold text-start mt-2">
+                {similar.VehicleName}
                 <p className="text-sm">
                   {similar.price
-                    ? ` ${similar.vehicleUse}`
+                    ? ` ₹ ${similar.price}`
                     : "Vehicles Not available"}
                 </p>
               </h4>
