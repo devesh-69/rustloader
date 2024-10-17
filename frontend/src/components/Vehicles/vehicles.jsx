@@ -22,6 +22,8 @@ import {
 import { ThreeDots } from "react-loader-spinner";
 import Fuse from "fuse.js";
 import { useLocation, useNavigate } from "react-router-dom";
+import LoadingScreen from "../LoadingScreen/LoadingScreen"; // Adjust the path as necessary
+import "../../index.css";
 
 export default function ConstructionRental() {
   const location = useLocation();
@@ -83,11 +85,7 @@ export default function ConstructionRental() {
   }, [selectedType]);
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <ThreeDots color="#00BFFF" height={50} width={50} />
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   if (error) {

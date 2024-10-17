@@ -4,6 +4,8 @@ import { StarIcon } from "lucide-react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import LoadingScreen from "../LoadingScreen/LoadingScreen"; // Adjust the path as necessary
+import "../../index.css";
 
 const reviews = [
   {
@@ -66,7 +68,7 @@ const CheckOut = () => {
     fetchVehicles();
   }, [id]); // Dependency array includes id to refetch if it changes
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <LoadingScreen />; // Ensure this line is reached when loading is true
   if (error) return <div>Error: {error}</div>;
   if (!vehicle || Object.keys(vehicle).length === 0)
     return <div>No vehicle found.</div>;
