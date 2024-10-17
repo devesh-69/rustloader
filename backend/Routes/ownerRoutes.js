@@ -3,7 +3,7 @@ const { registerOwner, loginOwner } = require("../Controllers/ownerController");
 const {
   validateOwnerRegistration,
   validateOwnerLogin,
-} = require("../middlewares/ownerValidation");
+} = require("../Middlewares/ownerValidation");
 const OwnerDocumentsMiddleware = require("../Middlewares/OwnerDocumentsMiddleware");
 
 const router = express.Router();

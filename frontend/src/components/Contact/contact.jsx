@@ -1,9 +1,52 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
-function contact() {
+function Contact() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    message: "",
+  });
+  const [formStatus, setFormStatus] = useState(null);
+
+  const handleInputChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.id]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post("https://api.web3forms.com/submit", {
+        access_key: "13f6aa91-2932-4777-9ea7-c2b40291fbd2",
+        ...formData,
+      });
+
+      if (response.status === 200) {
+        setFormStatus("Success! We’ll get back to you shortly.");
+      } else {
+        setFormStatus("Oops! Something went wrong.");
+      }
+    } catch (error) {
+      setFormStatus("Failed to send the message. Please try again.");
+    }
+
+    // Reset the form
+    setFormData({
+      name: "",
+      email: "",
+      phone: "",
+      message: "",
+    });
+  };
+
   return (
-    <div className="flex flex-col min-h-[100dvh">
+    <div className="flex flex-col min-h-[100dvh]">
       <main className="flex-1 mx-auto scale-90">
         <section className="bg-background py-12 md:py-24">
           <div className="container grid grid-cols-1 gap-12 md:grid-cols-2">
@@ -17,7 +60,7 @@ function contact() {
                   form and we'll get back to you as soon as possible.
                 </p>
               </div>
-              <form className="space-y-4">
+              <form className="space-y-4" onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
                     <label
@@ -30,7 +73,10 @@ function contact() {
                       id="name"
                       type="text"
                       placeholder="Devesh Tatkare"
+                      value={formData.name}
+                      onChange={handleInputChange}
                       className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                      required
                     />
                   </div>
                   <div className="space-y-2">
@@ -44,7 +90,10 @@ function contact() {
                       id="email"
                       type="email"
                       placeholder="tatkaredevesh.com"
+                      value={formData.email}
+                      onChange={handleInputChange}
                       className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                      required
                     />
                   </div>
                 </div>
@@ -59,7 +108,10 @@ function contact() {
                     id="phone"
                     type="tel"
                     placeholder="91+ 989852508"
+                    value={formData.phone}
+                    onChange={handleInputChange}
                     className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    required
                   />
                 </div>
                 <div className="space-y-2">
@@ -73,7 +125,10 @@ function contact() {
                     id="message"
                     rows="5"
                     placeholder="How can we help you?"
+                    value={formData.message}
+                    onChange={handleInputChange}
                     className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    required
                   />
                 </div>
                 <button
@@ -83,6 +138,11 @@ function contact() {
                   Submit
                 </button>
               </form>
+              {formStatus && (
+                <p className="mt-4 text-sm font-medium text-green-600">
+                  {formStatus}
+                </p>
+              )}
             </div>
             <div className="space-y-6">
               <div>
@@ -130,7 +190,7 @@ function contact() {
                   </p>
                   <p>
                     <span className="font-medium">Email:</span>{" "}
-                    rustloader@gmail.com
+                    rustloader7@gmail.com
                   </p>
                 </div>
               </div>
@@ -176,4 +236,4 @@ function CheckIcon(props) {
   );
 }
 
-export default contact;
+export default Contact;
