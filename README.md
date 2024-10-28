@@ -1,7 +1,7 @@
 # 🚜 RustLoader
 
 Welcome to RustLoader! Your ultimate rental platform for high-cost construction vehicles.  
-Check it out live: [RustLoader](https://github.com/devesh-69/rustloader)
+Check it out live: [RustLoader](https://rustloader.vercel.app/)
 
 # 📖 About
 
@@ -27,6 +27,9 @@ RustLoader is a rental platform designed to enhance access to essential, high-co
 3. Run the application:
    ```bash
    bun dev
+
+# 📜 License
+This project is not open source. It is proprietary. For licensing inquiries, please contact us directly.
 
 # 💬 Contact
 For any inquiries, please reach out!
